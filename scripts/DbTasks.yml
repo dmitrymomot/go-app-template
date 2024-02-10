@@ -2,9 +2,12 @@
 
 version: "3"
 
+includes:
+  build: ./BuildTasks.yml
+
 tasks:
   default:
-    silent: false
+    silent: true
     deps:
       - sqlc
 
@@ -19,9 +22,7 @@ tasks:
   sqlc:
     desc: Generate code from SQL queries.
     silent: true
-    dir: ./internal/repository
-    preconditions:
-      - test -f .env
+    dir: ./db
     cmds:
       - sqlc generate
 
@@ -30,16 +31,20 @@ tasks:
     aliases:
       - nm
     silent: true
-    dir: ./internal/repository/sql/migrations
+    dir: ./db/sql/migrations
     cmds:
       - sql-migrate new {{.CLI_ARGS}}
       - go mod tidy
 
   migrate:
     desc: Run migrations.
-    silent: false
+    silent: true
+    deps:
+      - task: build:migration
     preconditions:
       - test -f .env
       - command -v ./bin/migrate
     cmds:
       - ./bin/migrate
+    # sources:
+    #   - ./db/sql/migrations/*.sql

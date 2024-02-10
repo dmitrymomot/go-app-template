@@ -8,6 +8,9 @@
 *.so
 *.dylib
 
+# Bin directory
+bin/
+
 # Test binary, built with `go test -c`
 *.test
 
@@ -19,3 +22,4 @@
 
 # Go workspace file
 go.work
+.task/checksum/*

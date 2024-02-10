@@ -1,0 +1,27 @@
+package views
+
+// Head represents the head section of the layout template.
+type Head struct {
+	Title       string // Title represents the title of the page.
+	Description string // Description represents the description of the page.
+}
+
+templ Layout(h Head) {
+	<!DOCTYPE html>
+	<html lang="en" class="h-full antialiased bg-white">
+		<head>
+			<title>{ h.Title }</title>
+			<meta description={ h.Description }/>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<link rel="stylesheet" href="/static/app.css"/>
+			<link rel="stylesheet" href="https://rsms.me/inter/inter.css"/>
+			<script src="/static/htmx.min.js"></script>
+		</head>
+		<body class="h-full">
+			<div class="min-h-full">
+				{ children... }
+			</div>
+		</body>
+	</html>
+}

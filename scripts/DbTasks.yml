@@ -8,6 +8,14 @@ tasks:
     deps:
       - sqlc
 
+  run:
+    desc: Run the local Turso DB.
+    silent: true
+    preconditions:
+      - command -v turso
+    cmds:
+      - turso dev --db-file ./db/local.db
+
   sqlc:
     desc: Generate code from SQL queries.
     silent: true

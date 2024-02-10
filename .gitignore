@@ -22,5 +22,5 @@ bin/
 
 # Go workspace file
 go.work
-.task/checksum/*
+.task/
 .env

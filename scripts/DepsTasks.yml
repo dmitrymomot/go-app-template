@@ -1,0 +1,67 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    silent: false
+    deps:
+      - check
+
+  install:
+    desc: Install dependencies for local development.
+    silent: true
+    cmds:
+      - brew install tursodatabase/tap/turso # Install Turso CLI
+      - brew install sqlc # Install SQLC (SQL repository generator)
+      - brew install mockery # Install Mockery (mocks generator)
+      - task: install-tailwindcss
+    generates:
+      - /opt/homebrew/bin/turso
+      - /opt/homebrew/bin/sqlc
+      - /opt/homebrew/bin/mockery
+
+  update:
+    desc: Update dependencies for local development.
+    silent: true
+    cmds:
+      - brew upgrade tursodatabase/tap/turso # Update Turso CLI
+      - brew upgrade sqlc # Update SQLC (SQL repository generator)
+      - brew upgrade mockery # Update Mockery (mocks generator)
+      - task: update-tailwindcss
+
+  check:
+    desc: Check if all dependencies are installed.
+    silent: true
+    cmds:
+      - command -v turso
+      - command -v sqlc
+      - command -v mockery
+      - command -v tailwindcss
+
+  install-tailwindcss:
+    desc: Install Tailwind CSS for the web application.
+    silent: true
+    cmds:
+      - |-
+        echo "Installing Tailwind CSS..."
+        curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-macos-arm64
+        chmod +x tailwindcss-macos-arm64
+        mkdir -p $HOME/bin
+        mv tailwindcss-macos-arm64 $HOME/bin/tailwindcss
+        echo "Tailwind CSS installed successfully."
+    generates:
+      - $HOME/bin/tailwindcss
+
+  update-tailwindcss:
+    desc: Update Tailwind CSS for the web application.
+    silent: true
+    cmds:
+      - |-
+        echo "Updating Tailwind CSS..."
+        curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-macos-arm64
+        chmod +x tailwindcss-macos-arm64
+        mkdir -p $HOME/bin
+        rm -f $HOME/bin/tailwindcss
+        mv tailwindcss-macos-arm64 $HOME/bin/tailwindcss
+        echo "Tailwind CSS installed successfully."

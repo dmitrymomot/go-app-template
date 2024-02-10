@@ -1,0 +1,38 @@
+# https://taskfile.dev
+
+version: "3"
+
+includes:
+  build: ./BuildTasks.yml
+
+tasks:
+  default:
+    silent: false
+    deps:
+      - dev
+
+  dev:
+    desc: Run the application in development mode.
+    silent: true
+    preconditions:
+      - test -f .env
+    env:
+      CGO_ENABLED: 1
+      COMMIT_HASH:
+        sh: git log -n 1 --format=%h
+    cmds:
+      - go clean -cache
+      - echo "Running the application on http://localhost:{{.HTTP_PORT}}"
+      - go run ./cmd/app/
+
+  run:
+    desc: Run the application.
+    silent: true
+    preconditions:
+      - command -v ./bin/migrate
+      - command -v ./bin/app
+    env:
+      CGO_ENABLED: 1
+    cmds:
+      - ./bin/migrate
+      - ./bin/app

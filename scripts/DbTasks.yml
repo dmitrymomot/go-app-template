@@ -1,0 +1,37 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    silent: false
+    deps:
+      - sqlc
+
+  sqlc:
+    desc: Generate code from SQL queries.
+    silent: true
+    dir: ./internal/repository
+    preconditions:
+      - test -f .env
+    cmds:
+      - sqlc generate
+
+  new-migration:
+    desc: Create new migration.
+    aliases:
+      - nm
+    silent: true
+    dir: ./internal/repository/sql/migrations
+    cmds:
+      - sql-migrate new {{.CLI_ARGS}}
+      - go mod tidy
+
+  migrate:
+    desc: Run migrations.
+    silent: false
+    preconditions:
+      - test -f .env
+      - command -v ./bin/migrate
+    cmds:
+      - ./bin/migrate

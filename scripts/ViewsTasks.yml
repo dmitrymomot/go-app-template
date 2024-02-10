@@ -1,0 +1,55 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    silent: true
+    deps:
+      - tw
+      - templ
+
+  templ:
+    desc: Generate go views from templ files.
+    silent: false
+    aliases:
+      - template
+      - tmpl
+    cmds:
+      - templ fmt web/views/
+      - templ generate web/views/
+      - task: tailwind
+    sources:
+      - ./web/views/*.templ
+    generates:
+      - ./web/views/*.go
+
+  tw:
+    desc: Generate minified Tailwind CSS file.
+    silent: false
+    aliases:
+      - tailwind
+    cmds:
+      - $HOME/tailwindcss -c ./web/tailwind.config.js -i ./web/src/tailwind.css -o ./web/static/app.css --minify
+    sources:
+      - ./web/src/tailwind.css
+      - ./web/tailwind.config.js
+      - ./web/views/**/*.go
+      - ./web/views/*.go
+      - ./web/views/*.templ
+      - ./web/views/**/*.templ
+    generates:
+      - ./web/static/app.css
+
+  tww:
+    desc: Watch on changes in templates and generate Tailwind CSS file.
+    silent: false
+    aliases:
+      - tailwind-watch
+    cmds:
+      - $HOME/tailwindcss -c ./web/tailwind.config.js -i ./web/src/tailwind.css -o ./web/static/app.css --watch
+    sources:
+      - ./web/src/tailwind.css
+      - ./web/tailwind.config.js
+    generates:
+      - ./web/static/app.css

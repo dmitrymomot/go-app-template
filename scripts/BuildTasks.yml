@@ -1,0 +1,50 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    silent: false
+    deps:
+      - app
+      - migration
+
+  app:
+    desc: Build the application.
+    silent: true
+    preconditions:
+      - test -f .env
+    env:
+      CGO_ENABLED: 1
+    cmds:
+      - go clean -cache
+      - go mod download
+      - go build -o ./bin/app ./cmd/app/
+    sources:
+      - ./cmd/app/
+    generates:
+      - ./bin/app
+
+  migration:
+    desc: Build the migrations runner.
+    silent: true
+    preconditions:
+      - test -f .env
+    env:
+      CGO_ENABLED: 1
+    cmds:
+      - go clean -cache
+      - go mod download
+      - go build -o ./bin/migrate ./cmd/migrate/
+    sources:
+      - ./cmd/migrate/
+    generates:
+      - ./bin/migrate
+
+  clean:
+    desc: Clean the project cache and remove the binary files.
+    silent: true
+    cmds:
+      - go clean -cache
+      - go mod tidy
+      - rm -rf ./bin

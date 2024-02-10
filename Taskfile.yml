@@ -1,0 +1,28 @@
+# https://taskfile.dev
+
+version: "3"
+
+dotenv:
+  - .env
+
+includes:
+  build: ./scripts/BuildTasks.yml
+  db: ./scripts/DbTasks.yml
+  deps: ./scripts/DepsTasks.yml
+  app: ./scripts/RunTasks.yml
+  test: ./scripts/TestsTasks.yml
+  view: ./scripts/ViewsTasks.yml
+
+tasks:
+  default:
+    silent: true
+    cmds:
+      - task: help
+
+  help:
+    desc: Show this help.
+    silent: true
+    aliases:
+      - h
+    cmds:
+      - task --list

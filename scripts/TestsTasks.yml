@@ -1,0 +1,25 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    silent: true
+    deps:
+      - run
+
+  run:
+    desc: Run the application tests.
+    silent: false
+    cmds:
+      - go test -p 1 -count=1 -race -cover ./...
+
+  mock:
+    desc: Generate mocks for repository interfaces.
+    aliases:
+      - mocks
+    silent: true
+    dir: ./internal
+    cmds:
+      - mockery
+      - go mod tidy

@@ -17,9 +17,11 @@ tasks:
     env:
       CGO_ENABLED: 1
     cmds:
+      - echo "Building the application..."
       - go clean -cache
       - go mod download
       - go build -o ./bin/app ./cmd/app/
+      - echo "Application built."
     sources:
       - ./cmd/app/
     generates:
@@ -33,9 +35,11 @@ tasks:
     env:
       CGO_ENABLED: 1
     cmds:
+      - echo "Building the migrations runner..."
       - go clean -cache
       - go mod download
       - go build -o ./bin/migrate ./cmd/migrate/
+      - echo "Migrations runner built."
     sources:
       - ./cmd/migrate/
     generates:
@@ -45,6 +49,9 @@ tasks:
     desc: Clean the project cache and remove the binary files.
     silent: true
     cmds:
+      - echo "Cleaning the project..."
       - go clean -cache
       - go mod tidy
       - rm -rf ./bin
+      - rm -rf ./vendor
+      - echo "Project cleaned."

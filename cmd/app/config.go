@@ -46,4 +46,7 @@ var (
 	staticDir       = env.GetString("STATIC_DIR", "./web/static")   // Must be a relative path
 	staticURLPrefix = env.GetString("STATIC_URL_PREFIX", "/static") // Must start with a slash
 	staticCacheTTL  = env.GetDuration("STATIC_CACHE_TTL", time.Hour)
+
+	// Cache
+	disableHTTPCache = env.GetBool("DISABLE_HTTP_CACHE", true)
 )

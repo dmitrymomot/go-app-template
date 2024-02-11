@@ -18,23 +18,27 @@ import (
 	"go.uber.org/zap"
 )
 
+// initRouter initializes and configures the router for the application.
+// It sets up the middleware stack, handles CORS, disables caching in debug mode,
+// and registers default error handlers. It also handles serving static files
+// from the './web/static' subdirectory.
 func initRouter(ctx context.Context, db *sql.DB, log *zap.SugaredLogger) *chi.Mux {
 	r := chi.NewRouter()
 
+	// Middleware stack
 	r.Use(
 		middleware.Heartbeat("/health"),
 		middleware.ThrottleBacklog(httpTrottleLimit, httpTrottleBacklog, httpTrottleTimeout),
+		middleware.RealIP,
 		httprate.LimitByRealIP(httpRequestLimit, httpRateLimitWindow), // Limit requests per IP
 		logger.LogRequest(log),
 		middleware.Recoverer,
 		middleware.CleanPath,
 		middleware.StripSlashes,
 		middleware.GetHead,
-		middleware.NoCache,
-		middleware.RealIP,
 		middleware.Timeout(httpRequestTimeout),
-		middleware.SetHeader("X-Content-Type-Options", "nosniff"),
-		middleware.SetHeader("X-Frame-Options", "deny"),
+		middleware.SetHeader("X-Content-Type-Options", "nosniff"), // Protection against MIME-sniffing
+		middleware.SetHeader("X-Frame-Options", "deny"),           // Protection against clickjacking
 		middleware.SetHeader("Server", serverHeader),
 
 		// Basic CORS
@@ -51,6 +55,11 @@ func initRouter(ctx context.Context, db *sql.DB, log *zap.SugaredLogger) *chi.Mu
 		// For more details, see https://go-chi.io/#/pages/middleware?id=routeheaders
 		// middleware.RouteHeaders(),
 	)
+
+	// Disable caching
+	if disableHTTPCache {
+		r.Use(middleware.NoCache)
+	}
 
 	// Default error handlers
 	r.NotFound(notFoundHandler())

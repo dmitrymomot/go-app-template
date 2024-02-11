@@ -26,3 +26,9 @@ tasks:
       - h
     cmds:
       - task --list
+
+  clean:
+    desc: Clean the task cache and remove the .task directory.
+    silent: true
+    cmds:
+      - rm -rf .task

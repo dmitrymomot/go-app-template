@@ -38,6 +38,7 @@ tasks:
       - ./web/views/*.go
       - ./web/views/*.templ
       - ./web/views/**/*.templ
+      - ./web/tailwind.config.js
     generates:
       - ./web/static/app.css
 

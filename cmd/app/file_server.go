@@ -12,6 +12,12 @@ import (
 
 // serveFile is a helper function to serve a single file and handle caching.
 func serveFile(w http.ResponseWriter, r *http.Request, file http.File, info os.FileInfo, cacheTTL time.Duration) {
+	if cacheTTL == 0 || appDebugMode {
+		// No caching
+		http.ServeContent(w, r, info.Name(), info.ModTime(), file)
+		return
+	}
+
 	// Generate ETag using file info
 	etag := fmt.Sprintf(`"%x-%x"`, info.ModTime().Unix(), info.Size())
 	lastModified := info.ModTime().UTC().Format(http.TimeFormat)

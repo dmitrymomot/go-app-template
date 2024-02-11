@@ -1,4 +1,4 @@
-module github.com/dmitrymomot/gth-templ
+module github.com/dmitrymomot/go-app-template
 
 go 1.21
 

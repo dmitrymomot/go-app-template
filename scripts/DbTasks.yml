@@ -48,3 +48,16 @@ tasks:
       - ./bin/migrate
     # sources:
     #   - ./db/sql/migrations/*.sql
+
+  rollback:
+    desc: Rollback migrations.
+    silent: true
+    deps:
+      - task: build:migration
+    preconditions:
+      - test -f .env
+      - command -v ./bin/migrate
+    cmds:
+      - ./bin/migrate -rollback
+    # sources:
+    #   - ./db/sql/migrations/*.sql

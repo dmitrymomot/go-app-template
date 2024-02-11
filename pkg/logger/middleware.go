@@ -1,10 +1,12 @@
 package logger
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
+	"github.com/go-chi/chi/v5/middleware"
 	"go.uber.org/zap"
 )
 
@@ -29,16 +31,24 @@ func LogRequestWithSkipper(log *zap.SugaredLogger, skipper func(r *http.Request)
 				return
 			}
 
+			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
+
 			start := time.Now()
-			next.ServeHTTP(w, r)
-			finish := time.Since(start)
-			log.Debugw("Request",
-				"method", r.Method,
-				"remote", r.RemoteAddr,
-				"path", r.URL.Path,
-				"duration", finish,
-			)
+			defer func() {
+				finish := time.Since(start)
+				log.Debugw("Request",
+					"method", r.Method,
+					"remote", r.RemoteAddr,
+					"path", r.URL.Path,
+					"duration", finish,
+					"status", ww.Status(),
+					"size", fmt.Sprintf("%dB", ww.BytesWritten()),
+				)
+			}()
+
+			next.ServeHTTP(ww, r)
 		}
+
 		return http.HandlerFunc(fn)
 	}
 }

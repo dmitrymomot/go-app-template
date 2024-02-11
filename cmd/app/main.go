@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/dmitrymomot/go-app-template/db/libsql"
-	"github.com/dmitrymomot/go-app-template/db/repository"
 	"github.com/dmitrymomot/httpserver"
 	"golang.org/x/sync/errgroup"
 )
@@ -33,9 +32,6 @@ func main() {
 		logger.Fatalw("Failed to open db connection", "error", err)
 	}
 	defer db.Close()
-
-	repo := repository.New(db)
-	_ = repo
 
 	// Init router
 	r := initRouter(ctx, db, logger)

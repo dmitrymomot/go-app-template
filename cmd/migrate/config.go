@@ -1,6 +1,9 @@
 package main
 
-import "github.com/dmitrymomot/go-env"
+import (
+	"github.com/dmitrymomot/go-env"
+	_ "github.com/joho/godotenv/autoload" // Load .env file automatically
+)
 
 var (
 	// App

@@ -1,39 +1,43 @@
 package main
 
 import (
-	"database/sql"
+	"flag"
 
-	migrate "github.com/rubenv/sql-migrate"
+	"github.com/dmitrymomot/go-app-template/db/libsql"
+	"github.com/dmitrymomot/go-app-template/db/migration"
 )
 
 func main() {
+	// Parse flags
+	rollback := flag.Bool("rollback", false, "Rollback all migrations")
+	flag.Parse()
+
 	log := initLogger()
 	defer log.Sync() //nolint:errcheck
 	logger := log.Sugar()
 	logger.Info("Starting db migration...")
 
 	// Init db connection
-	db, err := sql.Open("libsql", dbConnString)
+	db, err := libsql.Connect(dbConnString, 1, 1)
 	if err != nil {
 		logger.Fatalw("Failed to open db connection", "error", err)
 	}
 	defer db.Close()
 
-	// check db connection
-	if err := db.Ping(); err != nil {
-		logger.Fatalw("Failed to ping db", "error", err)
+	// Rollback all migrations
+	if rollback != nil && *rollback {
+		n, err := migration.Down(db, "sqlite3", migrationsTable, migrationsDir)
+		if err != nil {
+			logger.Fatalw("Failed to rollback migrations", "error", err)
+		}
+		logger.Infof("Rolled back %d migrations!", n)
+		return
 	}
 
-	m := migrate.MigrationSet{
-		TableName: migrationsTable,
-	}
-	migrations := &migrate.FileMigrationSource{
-		Dir: migrationsDir,
-	}
-	n, err := m.Exec(db, "sqlite3", migrations, migrate.Up)
+	// Apply all migrations
+	n, err := migration.Up(db, "sqlite3", migrationsTable, migrationsDir)
 	if err != nil {
 		logger.Fatalw("Failed to apply migrations", "error", err)
 	}
-
 	logger.Infof("Applied %d migrations!", n)
 }

@@ -2,6 +2,7 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     './web/views/**/*.{html,js,ts,templ,go}',
     './web/components/**/*.{html,js,ts,templ,go}'

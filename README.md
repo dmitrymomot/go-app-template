@@ -9,4 +9,4 @@
 [![GolangCI Lint](https://github.com/dmitrymomot/go-app-template/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/dmitrymomot/go-app-template/actions/workflows/golangci-lint.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dmitrymomot/go-app-template)](https://goreportcard.com/report/github.com/dmitrymomot/go-app-template)
 
-A GoLang app template featuring TailwindCSS for styling, HTMX for dynamic UIs, TursoDB for efficient data management, and Templ for templating, streamlining web development workflows.
+A **full-stack** app template based on Golang and featuring TailwindCSS for styling, HTMX for dynamic UIs, TursoDB for efficient data management, and Templ for component-style templating  (similar to ReactJs), streamlining web development workflows.

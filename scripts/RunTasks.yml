@@ -9,7 +9,7 @@ tasks:
   default:
     silent: false
     deps:
-      - dev
+      - run
 
   dev:
     desc: Run the application in development mode.
@@ -31,8 +31,6 @@ tasks:
     preconditions:
       - command -v ./bin/migrate
       - command -v ./bin/app
-    env:
-      CGO_ENABLED: 1
     cmds:
       - ./bin/migrate
       - ./bin/app

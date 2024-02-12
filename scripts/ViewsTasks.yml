@@ -16,13 +16,14 @@ tasks:
       - template
       - tmpl
     cmds:
-      - templ fmt web/views/
-      - templ generate web/views/
+      - templ fmt ./web/views/**/*.templ
+      - templ generate ./web/views/**/*.templ
       - task: tailwind
+      - errtrace -w ./web/views/**/*.go
     sources:
-      - ./web/views/*.templ
+      - ./web/views/**/*.templ
     generates:
-      - ./web/views/*.go
+      - ./web/views/**/*.go
 
   tw:
     desc: Generate minified Tailwind CSS file.

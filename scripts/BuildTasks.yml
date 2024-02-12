@@ -19,6 +19,7 @@ tasks:
     cmds:
       - echo "Building the application..."
       - go clean -cache
+      - errtrace -w ./...
       - go mod download
       - go build -o ./bin/app ./cmd/app/
       - echo "Application built."
@@ -37,6 +38,7 @@ tasks:
     cmds:
       - echo "Building the migrations runner..."
       - go clean -cache
+      - errtrace -w ./...
       - go mod download
       - go build -o ./bin/migrate ./cmd/migrate/
       - echo "Migrations runner built."

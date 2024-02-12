@@ -49,4 +49,7 @@ var (
 
 	// Cache
 	disableHTTPCache = env.GetBool("DISABLE_HTTP_CACHE", true)
+
+	// Redis
+	redisConnString = env.GetString("REDIS_URL", "redis://localhost:6379/0")
 )

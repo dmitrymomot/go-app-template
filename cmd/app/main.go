@@ -9,6 +9,7 @@ import (
 
 	"github.com/dmitrymomot/go-app-template/db/libsql"
 	"github.com/dmitrymomot/httpserver"
+	"github.com/redis/go-redis/v9"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -26,15 +27,28 @@ func main() {
 	}()
 	logger := log.Sugar()
 
+	// Setup main component logger
+	mainLogger := logger.With("component", "main")
+	mainLogger.Info("Starting server...")
+	defer func() { logger.Info("Server successfully shutdown") }()
+
 	// Init db connection
 	db, err := libsql.Connect(dbConnString, dbMaxOpenConns, dbMaxIdleConns)
 	if err != nil {
-		logger.Fatalw("Failed to open db connection", "error", err)
+		mainLogger.Fatalw("Failed to open db connection", "error", err)
 	}
 	defer db.Close()
 
+	// Init redis connection
+	redisConnOpt, err := redis.ParseURL(redisConnString)
+	if err != nil {
+		mainLogger.Fatalw("Failed to parse redis connection string", "error", err)
+	}
+	redisClient := redis.NewClient(redisConnOpt)
+	defer redisClient.Close()
+
 	// Init router
-	r := initRouter(ctx, db, logger)
+	r := initRouter(logger, redisClient)
 
 	// TODO: remove this route and add your own instead.
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -57,6 +71,6 @@ func main() {
 
 	// Wait for all goroutines to finish
 	if err := g.Wait(); err != nil {
-		logger.Fatalw("Server stopped with error", "error", err)
+		mainLogger.Fatalw("Server stopped with error", "error", err)
 	}
 }

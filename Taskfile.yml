@@ -32,3 +32,10 @@ tasks:
     silent: true
     cmds:
       - rm -rf .task
+
+  errtrace:
+    desc: Instrument the code with error trace wrapper.
+    silent: true
+    aliases: ["err"]
+    cmds:
+      - errtrace -w ./...

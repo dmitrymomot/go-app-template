@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"braces.dev/errtrace"
 	"github.com/libsql/go-libsql" // init libSQL driver
 )
 
@@ -14,19 +15,19 @@ import (
 // It returns a pointer to the sql.DB object and an error if any.
 func Connect(dbName, primaryUrl, authToken, tempDir string) (*sql.DB, error) {
 	if dbName == "" {
-		return nil, ErrMissedDBName
+		return nil, errtrace.Wrap(ErrMissedDBName)
 	}
 	if primaryUrl == "" {
-		return nil, ErrMissedPrimaryURL
+		return nil, errtrace.Wrap(ErrMissedPrimaryURL)
 	}
 	if authToken == "" {
-		return nil, ErrMissedAuthToken
+		return nil, errtrace.Wrap(ErrMissedAuthToken)
 	}
 
 	// Create a temporary directory to store the database file
 	dir, err := os.MkdirTemp(tempDir, "libsql-*")
 	if err != nil {
-		return nil, errors.Join(ErrFailedToCreateTempDir, err)
+		return nil, errtrace.Wrap(errors.Join(ErrFailedToCreateTempDir, err))
 	}
 	defer os.RemoveAll(dir) //nolint:errcheck
 
@@ -34,7 +35,7 @@ func Connect(dbName, primaryUrl, authToken, tempDir string) (*sql.DB, error) {
 
 	connector, err := libsql.NewEmbeddedReplicaConnector(dbPath, primaryUrl, authToken)
 	if err != nil {
-		return nil, errors.Join(ErrFailedToCreateConnector, err)
+		return nil, errtrace.Wrap(errors.Join(ErrFailedToCreateConnector, err))
 	}
 	defer connector.Close()
 

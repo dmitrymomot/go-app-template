@@ -3,6 +3,7 @@ package logger
 import (
 	"errors"
 
+	"braces.dev/errtrace"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -55,7 +56,7 @@ func New(cnf Config) (*zap.Logger, error) {
 	// Build the logger.
 	zapLogger, err := zapLoggerConfig.Build(opts...)
 	if err != nil {
-		return nil, errors.Join(ErrFailedToInitLogger, err)
+		return nil, errtrace.Wrap(errors.Join(ErrFailedToInitLogger, err))
 	}
 
 	// Replace the global logger.

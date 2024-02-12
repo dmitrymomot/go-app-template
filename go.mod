@@ -3,6 +3,7 @@ module github.com/dmitrymomot/go-app-template
 go 1.21
 
 require (
+	braces.dev/errtrace v0.3.0
 	github.com/a-h/templ v0.2.543
 	github.com/alexedwards/scs/goredisstore v0.0.0-20240203174419-a38e822451b6
 	github.com/alexedwards/scs/v2 v2.7.0

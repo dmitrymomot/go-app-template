@@ -1,6 +1,7 @@
 package db
 
 import (
+	"braces.dev/errtrace"
 	"database/sql"
 	"errors"
 )
@@ -11,10 +12,10 @@ import (
 func InitDB(driver, dbConnString string, dbMaxOpenConns, dbMaxIdleConns int) (*sql.DB, error) {
 	// Validate input parameters
 	if dbConnString == "" {
-		return nil, ErrEmptyDBConnString
+		return nil, errtrace.Wrap(ErrEmptyDBConnString)
 	}
 	if driver == "" {
-		return nil, ErrUndefinedDBDriver
+		return nil, errtrace.Wrap(ErrUndefinedDBDriver)
 	}
 	if dbMaxOpenConns <= 0 {
 		dbMaxOpenConns = 1
@@ -26,7 +27,7 @@ func InitDB(driver, dbConnString string, dbMaxOpenConns, dbMaxIdleConns int) (*s
 	// Init db connection
 	db, err := sql.Open(driver, dbConnString)
 	if err != nil {
-		return nil, errors.Join(ErrFailedToOpenDBConnection, err)
+		return nil, errtrace.Wrap(errors.Join(ErrFailedToOpenDBConnection, err))
 	}
 
 	db.SetMaxOpenConns(dbMaxOpenConns)
@@ -34,7 +35,7 @@ func InitDB(driver, dbConnString string, dbMaxOpenConns, dbMaxIdleConns int) (*s
 
 	// check db connection
 	if err := db.Ping(); err != nil {
-		return nil, errors.Join(ErrFailedToPingDB, err)
+		return nil, errtrace.Wrap(errors.Join(ErrFailedToPingDB, err))
 	}
 
 	return db, nil

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"braces.dev/errtrace"
 	libsql_remote "github.com/dmitrymomot/go-app-template/db/libsql/remote"
 	"github.com/dmitrymomot/httpserver"
 	"github.com/redis/go-redis/v9"
@@ -66,7 +67,7 @@ func main() {
 			httpserver.WithWriteTimeout(httpWriteTimeout),
 			httpserver.WithGracefulShutdown(10*time.Second),
 		)
-		return server.Start(ctx)
+		return errtrace.Wrap(server.Start(ctx))
 	})
 
 	// Wait for all goroutines to finish

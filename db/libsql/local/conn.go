@@ -3,6 +3,7 @@ package libsql_local
 import (
 	"database/sql"
 
+	"braces.dev/errtrace"
 	"github.com/dmitrymomot/go-app-template/db"
 	_ "github.com/libsql/go-libsql" // init libSQL driver (it's fully compatible with the sqlite3)
 )
@@ -14,5 +15,5 @@ func Connect(dbConnString string) (*sql.DB, error) {
 	if dbConnString == "" {
 		dbConnString = ":memory:"
 	}
-	return db.InitDB("libsql", dbConnString, 1, 1)
+	return errtrace.Wrap2(db.InitDB("libsql", dbConnString, 1, 1))
 }

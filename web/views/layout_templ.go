@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import "context"
 import "io"
 import "bytes"
+import "braces.dev/errtrace"
 
 // Head represents the head section of the layout template.
 type Head struct {
@@ -31,54 +32,54 @@ func Layout(h Head) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\" class=\"h-full antialiased bg-white\"><head><title>")
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+			return errtrace.Wrap(templ_7745c5c3_Err)
 		}
 		var templ_7745c5c3_Var2 string = h.Title
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+			return errtrace.Wrap(templ_7745c5c3_Err)
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><meta description=\"")
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+			return errtrace.Wrap(templ_7745c5c3_Err)
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(h.Description))
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+			return errtrace.Wrap(templ_7745c5c3_Err)
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><script src=\"/static/darkmode.js\">")
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+			return errtrace.Wrap(templ_7745c5c3_Err)
 		}
 		templ_7745c5c3_Var3 := ``
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+			return errtrace.Wrap(templ_7745c5c3_Err)
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script><link rel=\"stylesheet\" href=\"/static/app.css\"><link rel=\"stylesheet\" href=\"https://rsms.me/inter/inter.css\"><script src=\"/static/htmx.min.js\">")
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+			return errtrace.Wrap(templ_7745c5c3_Err)
 		}
 		templ_7745c5c3_Var4 := ``
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+			return errtrace.Wrap(templ_7745c5c3_Err)
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script></head><body class=\"h-full bg-white dark:bg-gray-900\"><div class=\"min-h-full\">")
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+			return errtrace.Wrap(templ_7745c5c3_Err)
 		}
 		templ_7745c5c3_Err = templ_7745c5c3_Var1.Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+			return errtrace.Wrap(templ_7745c5c3_Err)
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></body></html>")
 		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+			return errtrace.Wrap(templ_7745c5c3_Err)
 		}
 		if !templ_7745c5c3_IsBuffer {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
 		}
-		return templ_7745c5c3_Err
+		return errtrace.Wrap(templ_7745c5c3_Err)
 	})
 }

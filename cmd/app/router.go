@@ -1,20 +1,21 @@
 package main
 
 import (
-	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/dmitrymomot/go-app-template/pkg/clientip"
 	"github.com/dmitrymomot/go-app-template/pkg/logger"
 	"github.com/dmitrymomot/go-app-template/web/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httprate"
+	httprateredis "github.com/go-chi/httprate-redis"
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
 
@@ -22,15 +23,23 @@ import (
 // It sets up the middleware stack, handles CORS, disables caching in debug mode,
 // and registers default error handlers. It also handles serving static files
 // from the './web/static' subdirectory.
-func initRouter(ctx context.Context, db *sql.DB, log *zap.SugaredLogger) *chi.Mux {
+func initRouter(log *zap.SugaredLogger, redisClient *redis.Client) *chi.Mux {
 	r := chi.NewRouter()
 
 	// Middleware stack
 	r.Use(
 		middleware.Heartbeat("/health"),
 		middleware.ThrottleBacklog(httpTrottleLimit, httpTrottleBacklog, httpTrottleTimeout),
-		middleware.RealIP,
+		clientip.Middleware(),
 		httprate.LimitByRealIP(httpRequestLimit, httpRateLimitWindow), // Limit requests per IP
+		httprate.Limit(
+			httpRequestLimit,
+			httpRateLimitWindow,
+			httprate.WithKeyByIP(),
+			httprateredis.WithRedisLimitCounter(&httprateredis.Config{
+				Client: redisClient,
+			}),
+		),
 		logger.LogRequest(log),
 		middleware.Recoverer,
 		middleware.CleanPath,

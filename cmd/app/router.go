@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/alexedwards/scs/goredisstore"
+	"github.com/alexedwards/scs/v2"
 	"github.com/dmitrymomot/go-app-template/pkg/clientip"
 	"github.com/dmitrymomot/go-app-template/pkg/logger"
 	"github.com/dmitrymomot/go-app-template/web/views"
@@ -69,6 +71,17 @@ func initRouter(log *zap.SugaredLogger, redisClient *redis.Client) *chi.Mux {
 	if disableHTTPCache {
 		r.Use(middleware.NoCache)
 	}
+
+	// Initialize a new session manager and configure the session lifetime.
+	sessionManager := scs.New()
+	sessionManager.Lifetime = sessionTTL
+	sessionManager.Cookie.Name = sessionName
+	sessionManager.Cookie.Secure = appEnv == "production"
+	sessionManager.Cookie.Persist = true
+	sessionManager.Cookie.SameSite = http.SameSiteLaxMode
+	sessionManager.Cookie.HttpOnly = true
+	sessionManager.Store = goredisstore.NewWithPrefix(redisClient, sessionPrefix)
+	r.Use(sessionManager.LoadAndSave)
 
 	// Default error handlers
 	r.NotFound(notFoundHandler())

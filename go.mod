@@ -4,6 +4,8 @@ go 1.21
 
 require (
 	github.com/a-h/templ v0.2.543
+	github.com/alexedwards/scs/goredisstore v0.0.0-20240203174419-a38e822451b6
+	github.com/alexedwards/scs/v2 v2.7.0
 	github.com/dmitrymomot/go-env v1.0.2
 	github.com/dmitrymomot/httpserver v0.1.2
 	github.com/go-chi/chi/v5 v5.0.11
@@ -12,7 +14,7 @@ require (
 	github.com/go-chi/httprate-redis v0.3.0
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
-	github.com/mattn/go-sqlite3 v1.14.19
+	github.com/libsql/go-libsql v0.0.0-20240210093909-f14a170a8487
 	github.com/redis/go-redis/v9 v9.4.0
 	github.com/rubenv/sql-migrate v1.6.1
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240208053015-5d6aa1e2196d
@@ -26,6 +28,7 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
 	github.com/libsql/sqlite-antlr4-parser v0.0.0-20230802215326-5cb5bb604475 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp v0.0.0-20240205201215-2c58cdc269a3 // indirect
 	nhooyr.io/websocket v1.8.10 // indirect

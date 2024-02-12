@@ -52,4 +52,9 @@ var (
 
 	// Redis
 	redisConnString = env.GetString("REDIS_URL", "redis://localhost:6379/0")
+
+	// Session
+	sessionName   = env.GetString("SESSION_COOKIE_NAME", "session")
+	sessionPrefix = env.GetString("SESSION_PREFIX", "session:")
+	sessionTTL    = env.GetDuration("SESSION_TTL", 24*time.Hour)
 )

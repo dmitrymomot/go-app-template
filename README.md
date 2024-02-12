@@ -19,7 +19,23 @@ The main goal of this project is to provide a simple and efficient way to build 
 
 [HTMX](https://htmx.org) stands out by simplifying web development compared to JavaScript frameworks like React, Angular, Vue, or Svelte. Its main advantage lies in its ease of use and integration, allowing developers to add interactive features using familiar HTML, without extensive JavaScript expertise. This results in quicker development times and potentially better performance due to less code being sent to the browser. HTMX's server-centric approach also simplifies state management, making it an efficient choice for enhancing traditional multi-page applications with dynamic elements, without the complexity of full-scale SPA frameworks.
 
+## Features
 
+// TODO: Add features
+
+## Getting Started
+
+### Prerequisites
+
+// TODO: Add prerequisites
+
+### Installation
+
+// TODO: Add installation
+
+### Usage
+
+// TODO: Add usage
 
 ## License
 

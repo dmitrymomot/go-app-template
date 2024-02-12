@@ -109,7 +109,9 @@ func initRouter(log *zap.SugaredLogger, redisClient *redis.Client) *chi.Mux {
 
 	// Static file serving from '/assets' subdirectory without directory listing.
 	if _, err := os.Stat(staticDir); !os.IsNotExist(err) {
-		fileServer(r, staticURLPrefix, http.Dir(staticDir), staticCacheTTL)
+		if err := fileServer(r, staticURLPrefix, http.Dir(staticDir), staticCacheTTL); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	return r

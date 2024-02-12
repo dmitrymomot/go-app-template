@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"braces.dev/errtrace"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -51,9 +52,9 @@ func serveFile(w http.ResponseWriter, r *http.Request, file http.File, info os.F
 }
 
 // fileServer sets up a http.FileServer handler to serve static files from a no directory listing file system.
-func fileServer(r chi.Router, publicPath string, root http.FileSystem, cacheTTL time.Duration) {
-	if strings.ContainsAny(publicPath, "{}*") {
-		panic("FileServer does not permit URL parameters.")
+func fileServer(r chi.Router, publicPath string, root http.FileSystem, cacheTTL time.Duration) error {
+	if strings.ContainsAny(publicPath, "{}") {
+		return errtrace.Wrap(fmt.Errorf("fileServer does not permit URL parameters: %s", publicPath))
 	}
 
 	publicPath = strings.TrimRight(publicPath, "/")
@@ -83,4 +84,6 @@ func fileServer(r chi.Router, publicPath string, root http.FileSystem, cacheTTL 
 		// Serve file with caching
 		serveFile(w, r, file, info, cacheTTL)
 	})
+
+	return nil
 }

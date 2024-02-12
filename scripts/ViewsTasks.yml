@@ -6,24 +6,25 @@ tasks:
   default:
     silent: true
     deps:
-      - tw
       - templ
 
   templ:
     desc: Generate go views from templ files.
-    silent: false
+    silent: true
     aliases:
       - template
       - tmpl
     cmds:
-      - templ fmt ./web/views/**/*.templ
-      - templ generate ./web/views/**/*.templ
+      - echo "Formatting templ files..."
+      - templ fmt web/views/
+      - echo "Generating go views from templ files..."
+      - templ generate web/views/
+      - echo "Done."
       - task: tailwind
-      - errtrace -w ./web/views/**/*.go
     sources:
-      - ./web/views/**/*.templ
+      - web/views/**/*.templ
     generates:
-      - ./web/views/**/*.go
+      - web/views/**/*.go
 
   tw:
     desc: Generate minified Tailwind CSS file.
@@ -31,7 +32,9 @@ tasks:
     aliases:
       - tailwind
     cmds:
+      - echo "Generating minified Tailwind CSS file..."
       - $HOME/tailwindcss -c ./web/tailwind.config.js -i ./web/src/tailwind.css -o ./web/static/app.css --minify
+      - echo "Done."
     sources:
       - ./web/src/tailwind.css
       - ./web/tailwind.config.js
@@ -49,7 +52,9 @@ tasks:
     aliases:
       - tailwind-watch
     cmds:
+      - echo "Watching on changes in templates and generating Tailwind CSS file..."
       - $HOME/tailwindcss -c ./web/tailwind.config.js -i ./web/src/tailwind.css -o ./web/static/app.css --watch
+      - echo "Done."
     sources:
       - ./web/src/tailwind.css
       - ./web/tailwind.config.js

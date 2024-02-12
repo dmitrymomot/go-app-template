@@ -17,10 +17,13 @@ tasks:
     env:
       CGO_ENABLED: 1
     cmds:
-      - echo "Building the application..."
+      - echo "Cleaning the project cache..."
       - go clean -cache
-      - errtrace -w ./...
+      - echo "Downloading the dependencies..."
       - go mod download
+      - echo "Adding errtrace to generated files..."
+      - errtrace -w ./...
+      - echo "Building the application..."
       - go build -o ./bin/app ./cmd/app/
       - echo "Application built."
     sources:
@@ -36,10 +39,11 @@ tasks:
     env:
       CGO_ENABLED: 1
     cmds:
-      - echo "Building the migrations runner..."
+      - echo "Cleaning the project cache..."
       - go clean -cache
-      - errtrace -w ./...
+      - echo "Downloading the dependencies..."
       - go mod download
+      - echo "Building the migrations runner..."
       - go build -o ./bin/migrate ./cmd/migrate/
       - echo "Migrations runner built."
     sources:

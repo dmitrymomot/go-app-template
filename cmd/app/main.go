@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dmitrymomot/go-app-template/db/libsql"
+	libsql_remote "github.com/dmitrymomot/go-app-template/db/libsql/remote"
 	"github.com/dmitrymomot/httpserver"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/sync/errgroup"
@@ -33,7 +33,7 @@ func main() {
 	defer func() { logger.Info("Server successfully shutdown") }()
 
 	// Init db connection
-	db, err := libsql.Connect(dbConnString, dbMaxOpenConns, dbMaxIdleConns)
+	db, err := libsql_remote.Connect(dbConnString, dbMaxOpenConns, dbMaxIdleConns)
 	if err != nil {
 		mainLogger.Fatalw("Failed to open db connection", "error", err)
 	}

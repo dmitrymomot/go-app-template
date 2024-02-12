@@ -1,4 +1,4 @@
-package libsql
+package libsql_remote
 
 import (
 	"database/sql"

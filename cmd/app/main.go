@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"braces.dev/errtrace"
+	"github.com/dmitrymomot/asyncer"
 	libsql_remote "github.com/dmitrymomot/go-app-template/db/libsql/remote"
 	"github.com/dmitrymomot/httpserver"
 	"github.com/redis/go-redis/v9"
@@ -48,6 +49,10 @@ func main() {
 	redisClient := redis.NewClient(redisConnOpt)
 	defer redisClient.Close()
 
+	// Create a new enqueuer with redis as the broker.
+	enqueuer := asyncer.MustNewEnqueuer(redisConnString)
+	defer enqueuer.Close()
+
 	// Init router
 	r := initRouter(logger, redisClient)
 
@@ -58,10 +63,10 @@ func main() {
 		_, _ = w.Write([]byte("Hello, World!"))
 	})
 
-	g, ctx := errgroup.WithContext(ctx)
+	eg, ctx := errgroup.WithContext(ctx)
 
 	// Run server
-	g.Go(func() error {
+	eg.Go(func() error {
 		server := httpserver.New(fmt.Sprintf(":%d", httpPort), r,
 			httpserver.WithReadTimeout(httpReadTimeout),
 			httpserver.WithWriteTimeout(httpWriteTimeout),
@@ -70,8 +75,25 @@ func main() {
 		return errtrace.Wrap(server.Start(ctx))
 	})
 
+	// Run a new queue server with redis as the broker.
+	eg.Go(asyncer.RunQueueServer(
+		ctx, redisConnString, logger,
+		// Register a handler for the task.
+		// asyncer.ScheduledHandlerFunc(TestTaskName, testTaskHandler),
+		// ... add more handlers here ...
+	))
+
+	// Run a scheduler with redis as the broker.
+	// The scheduler will schedule tasks to be enqueued at a specified time.
+	eg.Go(asyncer.RunSchedulerServer(
+		ctx, redisConnString, logger,
+		// Schedule the scheduled_task task to be enqueued every 1 seconds.
+		// asyncer.NewTaskScheduler("@every 1s", TestTaskName),
+		// ... add more scheduled tasks here ...
+	))
+
 	// Wait for all goroutines to finish
-	if err := g.Wait(); err != nil {
+	if err := eg.Wait(); err != nil {
 		mainLogger.Fatalw("Server stopped with error", "error", err)
 	}
 }

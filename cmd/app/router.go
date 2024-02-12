@@ -9,7 +9,7 @@ import (
 
 	"github.com/alexedwards/scs/goredisstore"
 	"github.com/alexedwards/scs/v2"
-	"github.com/dmitrymomot/go-app-template/pkg/clientip"
+	"github.com/dmitrymomot/clientip"
 	"github.com/dmitrymomot/go-app-template/pkg/logger"
 	"github.com/dmitrymomot/go-app-template/web/views"
 	"github.com/go-chi/chi/v5"
@@ -17,6 +17,7 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httprate"
 	httprateredis "github.com/go-chi/httprate-redis"
+	"github.com/gorilla/csrf"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
@@ -65,6 +66,20 @@ func initRouter(log *zap.SugaredLogger, redisClient *redis.Client) *chi.Mux {
 		// TODO: route headers, useful for setting different routers for subdomains
 		// For more details, see https://go-chi.io/#/pages/middleware?id=routeheaders
 		// middleware.RouteHeaders(),
+
+		// CSRF protection
+		// For more details, see https://github.com/gorilla/csrf?tab=readme-ov-file#html-forms
+		csrf.Protect(csrfSecret,
+			csrf.RequestHeader("X-CSRF-Token"),
+			csrf.CookieName("X-CSRF-Token"),
+			csrf.FieldName("_csrf"),
+			csrf.SameSite(csrf.SameSiteLaxMode),
+			csrf.Secure(appEnv == "production"),
+			csrf.TrustedOrigins(corsAllowedOrigins), // Allow cross-domain CSRF use-cases
+			csrf.ErrorHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				sendErrorResponse(w, r, http.StatusForbidden, errors.New("CSRF token invalid"))
+			})),
+		),
 	)
 
 	// Disable caching

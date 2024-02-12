@@ -8,12 +8,14 @@ require (
 	github.com/alexedwards/scs/goredisstore v0.0.0-20240203174419-a38e822451b6
 	github.com/alexedwards/scs/v2 v2.7.0
 	github.com/dmitrymomot/asyncer v0.3.1
+	github.com/dmitrymomot/clientip v1.0.0
 	github.com/dmitrymomot/go-env v1.0.2
 	github.com/dmitrymomot/httpserver v0.1.2
 	github.com/go-chi/chi/v5 v5.0.11
 	github.com/go-chi/cors v1.2.1
 	github.com/go-chi/httprate v0.8.0
 	github.com/go-chi/httprate-redis v0.3.0
+	github.com/gorilla/csrf v1.7.2
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
 	github.com/libsql/go-libsql v0.0.0-20240210093909-f14a170a8487
@@ -31,6 +33,7 @@ require (
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/hibiken/asynq v0.24.1 // indirect
 	github.com/klauspost/compress v1.15.15 // indirect
 	github.com/libsql/sqlite-antlr4-parser v0.0.0-20230802215326-5cb5bb604475 // indirect

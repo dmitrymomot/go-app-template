@@ -42,6 +42,9 @@ var (
 	corsAllowedCredentials = env.GetBool("CORS_ALLOWED_CREDENTIALS", true)
 	corsMaxAge             = env.GetInt("CORS_MAX_AGE", 300)
 
+	// CSRF
+	csrfSecret = env.GetBytes("CSRF_SECRET", []byte("32-byte-long-auth-key"))
+
 	// Static
 	staticDir       = env.GetString("STATIC_DIR", "./web/static")   // Must be a relative path
 	staticURLPrefix = env.GetString("STATIC_URL_PREFIX", "/static") // Must start with a slash

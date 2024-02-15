@@ -25,6 +25,7 @@ The main goal of this project is to provide a simple and efficient way to build 
 - [x] TailwindCSS for styling
 - [x] HTMX for dynamic UIs
 - [x] Postgres/SQLite/TursoDB (libSQL) for efficient data management
+- [ ] In-memory SQLite database for testing instead of mocks.
 - [x] Templ for component-style templating (similar to ReactJs)
 - [x] Session management
 - [x] Static file serving
@@ -34,14 +35,14 @@ The main goal of this project is to provide a simple and efficient way to build 
 - [x] SQLC for type-safe SQL queries
 - [ ] Websockets for real-time communication
 - [ ] Sub-domain routing
-- [ ] Multi-language support
-- [ ] Email notifications with predefined templates for transactional emails
-- [ ] Audit logs
+- [ ] Multi-language support using [i18n](https://github.com/nicksnyder/go-i18n)
+- [ ] Email notifications with predefined [templates](https://github.com/ActiveCampaign/postmark-templates/tree/main) for transactional emails
 - [ ] Testing and benchmarking
-- [ ] Continuous integration and deployment
-- [ ] Docker support
-- [ ] Monitoring and logging
-- [ ] Support monitoring and logging tools of https://betterstack.com/
+- [ ] Continuous integration and deployment to DigitalOcean App Platform
+- [ ] Monitoring and logging via https://betterstack.com/
+- [ ] Authentication and authorization via Email/Password, OAuth2 (Google, Facebook, Twitter, GitHub, etc.).
+- [ ] Forgot password and email verification
+- [ ] Two-factor authentication
 
 
 ## Getting Started

@@ -91,7 +91,7 @@ func initRouter(log *zap.SugaredLogger, redisClient *redis.Client) *chi.Mux {
 	sessionManager := scs.New()
 	sessionManager.Lifetime = sessionTTL
 	sessionManager.Cookie.Name = sessionName
-	sessionManager.Cookie.Secure = appEnv == "production"
+	sessionManager.Cookie.Secure = appEnv == EnvProduction
 	sessionManager.Cookie.Persist = true
 	sessionManager.Cookie.SameSite = http.SameSiteLaxMode
 	sessionManager.Cookie.HttpOnly = true
@@ -145,9 +145,12 @@ func methodNotAllowedHandler() func(w http.ResponseWriter, r *http.Request) {
 
 // Predefined http encoder content type
 const (
-	contentTypeHeader = "Content-Type"
-	contentTypeJSON   = "application/json; charset=utf-8"
-	contentTypeHTML   = "text/html; charset=utf-8"
+	contentTypeHeader  = "Content-Type"
+	contextTypeCharset = "charset=utf-8"
+	contentTypeJSON    = "application/json"
+	contentTypeHTML    = "text/html"
+	contentTypeJSONUTF = contentTypeJSON + "; " + contextTypeCharset
+	contentTypeHTMLUTF = contentTypeHTML + "; " + contextTypeCharset
 )
 
 // Helper function to check if an error code is valid
@@ -157,7 +160,7 @@ func isValidErrorCode(errCode int) bool {
 
 // Is request a json request?
 func isJsonRequest(r *http.Request) bool {
-	return strings.Contains(strings.ToLower(r.Header.Get(contentTypeHeader)), "application/json")
+	return strings.Contains(strings.ToLower(r.Header.Get(contentTypeHeader)), contentTypeJSON)
 }
 
 // Helper function to send an error response
@@ -167,7 +170,7 @@ func sendErrorResponse(w http.ResponseWriter, r *http.Request, statusCode int, e
 	}
 
 	if isJsonRequest(r) {
-		w.Header().Set(contentTypeHeader, contentTypeJSON)
+		w.Header().Set(contentTypeHeader, contentTypeJSONUTF)
 		w.WriteHeader(statusCode)
 		if err := json.NewEncoder(w).Encode(map[string]interface{}{
 			"error": err.Error(),
@@ -177,7 +180,7 @@ func sendErrorResponse(w http.ResponseWriter, r *http.Request, statusCode int, e
 		return
 	}
 
-	w.Header().Set(contentTypeHeader, contentTypeHTML)
+	w.Header().Set(contentTypeHeader, contentTypeHTMLUTF)
 	w.WriteHeader(statusCode)
 	if err := views.ErrorPage(statusCode, err.Error()).Render(r.Context(), w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

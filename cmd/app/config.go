@@ -7,10 +7,20 @@ import (
 	_ "github.com/joho/godotenv/autoload" // Load .env file automatically
 )
 
+// Enviroments
+const (
+	EnvLocal       = "local"
+	EnvDevelopment = "development"
+	EnvStaging     = "staging"
+	EnvProduction  = "production"
+	EnvTesting     = "testing"
+)
+
+// Predefined environment variables
 var (
 	// App
 	appName      = env.GetString("APP_NAME", "go-app-template")
-	appEnv       = env.GetString("APP_ENV", "local") // local, development, production
+	appEnv       = env.GetString("APP_ENV", EnvProduction) // local, development, production, testing
 	appDebugMode = env.GetBool("APP_DEBUG_MODE", false)
 	appLogLevel  = env.GetString("APP_LOG_LEVEL", "info") // debug, info, warn, error
 

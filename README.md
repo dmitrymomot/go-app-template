@@ -21,25 +21,25 @@ The main goal of this project is to provide a simple and efficient way to build 
 
 ## Features / Roadmap
 
-- [x] Go-chi router with pre-configured middleware and graceful shutdown
-- [x] TailwindCSS for styling
-- [x] HTMX for dynamic UIs
+- [x] [Go-chi](https://go-chi.io/#/) router with pre-configured middleware and graceful shutdown
+- [x] [TailwindCSS](https://tailwindcss.com) for styling
+- [x] [HTMX](https://htmx.org) for dynamic UIs
 - [x] Postgres/SQLite/TursoDB (libSQL) for efficient data management
 - [ ] In-memory SQLite database for testing instead of mocks.
-- [x] Templ for component-style templating (similar to ReactJs)
-- [x] Session management
+- [x] [Templ](https://templ.guide) for component-style templating (similar to ReactJs)
+- [x] Session management (using [alexedwards/scs](https://github.com/alexedwards/scs))
 - [x] Static file serving
-- [x] Jobs and workers for background tasks
-- [x] Cron jobs for scheduled tasks
-- [x] Migration tool for database schema changes
-- [x] SQLC for type-safe SQL queries
-- [ ] Websockets for real-time communication
+- [x] Jobs and workers for background tasks (using [asyncer](https://github.com/dmitrymomot/asyncer))
+- [x] Cron jobs for scheduled tasks (using [asyncer](https://github.com/dmitrymomot/asyncer) too)
+- [x] Migration tool for database schema changes (using [rubenv/sql-migrate](https://github.com/rubenv/sql-migrate))
+- [x] [SQLC](https://sqlc.dev) for type-safe SQL queries
+- [ ] Websockets for real-time communication (using [melody](https://github.com/olahol/melody))
 - [ ] Sub-domain routing
-- [ ] Multi-language support using [i18n](https://github.com/nicksnyder/go-i18n)
+- [ ] Multi-language support (using [i18n](https://github.com/nicksnyder/go-i18n))
 - [ ] Email notifications with predefined [templates](https://github.com/ActiveCampaign/postmark-templates/tree/main) for transactional emails
 - [ ] Testing and benchmarking
 - [ ] Continuous integration and deployment to DigitalOcean App Platform
-- [ ] Monitoring and logging via https://betterstack.com/
+- [ ] Monitoring and logging via [betterstack](https://betterstack.com/)
 - [ ] Authentication and authorization via Email/Password, OAuth2 (Google, Facebook, Twitter, GitHub, etc.).
 - [ ] Forgot password and email verification
 - [ ] Two-factor authentication

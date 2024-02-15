@@ -19,9 +19,30 @@ The main goal of this project is to provide a simple and efficient way to build 
 
 [HTMX](https://htmx.org) stands out by simplifying web development compared to JavaScript frameworks like React, Angular, Vue, or Svelte. Its main advantage lies in its ease of use and integration, allowing developers to add interactive features using familiar HTML, without extensive JavaScript expertise. This results in quicker development times and potentially better performance due to less code being sent to the browser. HTMX's server-centric approach also simplifies state management, making it an efficient choice for enhancing traditional multi-page applications with dynamic elements, without the complexity of full-scale SPA frameworks.
 
-## Features
+## Features / Roadmap
 
-// TODO: Add features
+- [x] Go-chi router with pre-configured middleware and graceful shutdown
+- [x] TailwindCSS for styling
+- [x] HTMX for dynamic UIs
+- [x] Postgres/SQLite/TursoDB (libSQL) for efficient data management
+- [x] Templ for component-style templating (similar to ReactJs)
+- [x] Session management
+- [x] Static file serving
+- [x] Jobs and workers for background tasks
+- [x] Cron jobs for scheduled tasks
+- [x] Migration tool for database schema changes
+- [x] SQLC for type-safe SQL queries
+- [ ] Websockets for real-time communication
+- [ ] Sub-domain routing
+- [ ] Multi-language support
+- [ ] Email notifications with predefined templates for transactional emails
+- [ ] Audit logs
+- [ ] Testing and benchmarking
+- [ ] Continuous integration and deployment
+- [ ] Docker support
+- [ ] Monitoring and logging
+- [ ] Support monitoring and logging tools of https://betterstack.com/
+
 
 ## Getting Started
 

@@ -26,6 +26,23 @@ tasks:
     generates:
       - web/views/**/*.go
 
+  templ-watch:
+    desc: Watch on changes in templ files and generate go views.
+    silent: true
+    aliases:
+      - template-watch
+      - tmpl-watch
+    preconditions:
+      - test -f .env
+    cmds:
+      - task: tailwind
+      - echo "Watching on changes in templ files and generating go views..."
+      - templ generate -path web/views/ -watch -proxy "http://localhost:${HTTP_PORT}" -cmd "task app:dev"
+    sources:
+      - web/views/**/*.templ
+    generates:
+      - web/views/**/*.go
+
   tw:
     desc: Generate minified Tailwind CSS file.
     silent: false

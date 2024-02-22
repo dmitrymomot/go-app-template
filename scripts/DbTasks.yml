@@ -9,15 +9,24 @@ tasks:
   default:
     silent: true
     deps:
-      - sqlc
+      - echo: "Run 'task --list' to see available tasks."
 
-  run:
+  turso:
     desc: Run the local Turso DB.
     silent: true
     preconditions:
       - command -v turso
     cmds:
-      - turso dev --db-file ./db/local.db
+      - turso dev --db-file ./db/local.db --port 1234
+
+  redis:
+    desc: Run the local Redis server.
+    silent: true
+    preconditions:
+      - command -v docker-compose
+      - test -f deployments/redis.yml
+    cmds:
+      - docker-compose -f deployments/redis.yml up -d
 
   sqlc:
     desc: Generate code from SQL queries.

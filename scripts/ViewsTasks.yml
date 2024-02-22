@@ -37,7 +37,7 @@ tasks:
     cmds:
       - task: tailwind
       - echo "Watching on changes in templ files and generating go views..."
-      - templ generate -path web/views/ -watch -proxy "http://localhost:${HTTP_PORT}" -cmd "task app:dev"
+      - templ generate -path web/views/ -watch -proxy "http://localhost:{{.HTTP_PORT}}" -cmd "task app:dev"
     sources:
       - web/views/**/*.templ
     generates:

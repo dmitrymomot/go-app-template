@@ -36,7 +36,7 @@ The main goal of this project is to provide a simple and efficient way to build 
 - [ ] Websockets for real-time communication (using [melody](https://github.com/olahol/melody))
 - [ ] Sub-domain routing
 - [ ] Multi-language support (using [i18n](https://github.com/nicksnyder/go-i18n))
-- [ ] Email notifications with predefined [templates](https://github.com/ActiveCampaign/postmark-templates/tree/main) for transactional emails
+- [ ] File uploads and storage in the s3-compatible object storage
 - [ ] Testing and benchmarking
 - [ ] Continuous integration and deployment to DigitalOcean App Platform
 - [ ] Monitoring and logging via [betterstack](https://betterstack.com/)

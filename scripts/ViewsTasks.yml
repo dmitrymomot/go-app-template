@@ -20,6 +20,8 @@ tasks:
       - templ fmt web/views/
       - echo "Generating go views from templ files..."
       - templ generate web/views/
+      - echo "Adding errtrace to generated files..."
+      - errtrace -w ./...
       - echo "Done."
     sources:
       - web/views/**/*.templ

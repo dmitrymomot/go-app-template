@@ -17,16 +17,16 @@ tasks:
       - tmpl
     cmds:
       - echo "Formatting templ files..."
-      - templ fmt web/views/
+      - templ fmt web/templates/views/
       - echo "Generating go views from templ files..."
-      - templ generate web/views/
+      - templ generate web/templates/views/
       - echo "Adding errtrace to generated files..."
       - errtrace -w ./...
       - echo "Done."
     sources:
-      - web/views/**/*.templ
+      - web/templates/views/**/*.templ
     generates:
-      - web/views/**/*.go
+      - web/templates/views/**/*.go
 
   templ-watch:
     desc: Watch on changes in templ files and generate go views.
@@ -39,11 +39,11 @@ tasks:
     cmds:
       - task: tailwind
       - echo "Watching on changes in templ files and generating go views..."
-      - templ generate -path web/views/ -watch -proxy "http://localhost:{{.HTTP_PORT}}" -cmd "task app:dev"
+      - templ generate -path web/templates/views/ -watch -proxy "http://localhost:{{.HTTP_PORT}}" -cmd "task app:dev"
     sources:
-      - web/views/**/*.templ
+      - web/templates/views/**/*.templ
     generates:
-      - web/views/**/*.go
+      - web/templates/views/**/*.go
 
   tw:
     desc: Generate minified Tailwind CSS file.
@@ -57,10 +57,10 @@ tasks:
     sources:
       - ./web/src/tailwind.css
       - ./web/tailwind.config.js
-      - ./web/views/**/*.go
-      - ./web/views/*.go
-      - ./web/views/*.templ
-      - ./web/views/**/*.templ
+      - ./web/templates/views/**/*.go
+      - ./web/templates/views/*.go
+      - ./web/templates/views/*.templ
+      - ./web/templates/views/**/*.templ
       - ./web/tailwind.config.js
     generates:
       - ./web/static/app.css

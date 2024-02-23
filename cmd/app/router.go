@@ -11,7 +11,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/dmitrymomot/clientip"
 	"github.com/dmitrymomot/go-app-template/pkg/logger"
-	"github.com/dmitrymomot/go-app-template/web/views"
+	"github.com/dmitrymomot/go-app-template/web/templates/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"

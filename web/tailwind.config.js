@@ -4,8 +4,8 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 export default {
   darkMode: 'class',
   content: [
-    './web/views/**/*.{html,js,ts,templ,go}',
-    './web/components/**/*.{html,js,ts,templ,go}'
+    './web/templates/views/**/*.{html,js,ts,templ,go}',
+    './web/templates/components/**/*.{html,js,ts,templ,go}'
   ],
   theme: {
     extend: {

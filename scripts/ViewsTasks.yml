@@ -7,6 +7,7 @@ tasks:
     silent: true
     deps:
       - templ
+      - tw
 
   templ:
     desc: Generate go views from templ files.
@@ -20,7 +21,6 @@ tasks:
       - echo "Generating go views from templ files..."
       - templ generate web/views/
       - echo "Done."
-      - task: tailwind
     sources:
       - web/views/**/*.templ
     generates:

@@ -25,7 +25,6 @@ The main goal of this project is to provide a simple and efficient way to build 
 - [x] [TailwindCSS](https://tailwindcss.com) for styling
 - [x] [HTMX](https://htmx.org) for dynamic UIs
 - [x] Postgres/SQLite/TursoDB (libSQL) for efficient data management
-- [ ] In-memory SQLite database for testing instead of mocks.
 - [x] [Templ](https://templ.guide) for component-style templating (similar to ReactJs)
 - [x] Session management (using [alexedwards/scs](https://github.com/alexedwards/scs))
 - [x] Hot-reloading for development (using [air](https://github.com/cosmtrek/air))
@@ -36,7 +35,7 @@ The main goal of this project is to provide a simple and efficient way to build 
 - [x] [SQLC](https://sqlc.dev) for type-safe SQL queries
 - [ ] Websockets for real-time communication (using [melody](https://github.com/olahol/melody))
 - [ ] Sub-domain routing
-- [ ] Multi-language support (using [i18n](https://github.com/nicksnyder/go-i18n))
+- [-] Multi-language support (using [i18n](https://github.com/nicksnyder/go-i18n))
 - [ ] File uploads and storage in the s3-compatible object storage
 - [ ] Testing and benchmarking
 - [ ] Continuous integration and deployment to DigitalOcean App Platform

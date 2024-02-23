@@ -16,8 +16,14 @@ tasks:
     silent: true
     preconditions:
       - command -v turso
+      - test -f .env
+      - sh: |
+          if ! [ -d ./tmp ]; then
+            mkdir -p ./tmp
+          fi
+        msg: "Could not create the 'tmp' directory."
     cmds:
-      - turso dev --db-file ./db/local.db --port 1234
+      - turso dev --db-file {{.DATABASE_FILEPATH}} --port 1234
 
   redis:
     desc: Run the local Redis server.

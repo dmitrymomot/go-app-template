@@ -37,7 +37,7 @@ func main() {
 	// Init db connection
 	db, err := libsql_remote.Connect(dbConnString, dbMaxOpenConns, dbMaxIdleConns)
 	if err != nil {
-		mainLogger.Fatalw("Failed to open db connection", "error", err)
+		mainLogger.Fatalw("Failed to open remote db connection", "error", err)
 	}
 	defer db.Close()
 

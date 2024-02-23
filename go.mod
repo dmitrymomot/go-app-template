@@ -37,6 +37,7 @@ require (
 	github.com/hibiken/asynq v0.24.1 // indirect
 	github.com/klauspost/compress v1.15.15 // indirect
 	github.com/libsql/sqlite-antlr4-parser v0.0.0-20230802215326-5cb5bb604475 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect

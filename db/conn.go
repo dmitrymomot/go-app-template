@@ -1,9 +1,10 @@
 package db
 
 import (
-	"braces.dev/errtrace"
 	"database/sql"
 	"errors"
+
+	"braces.dev/errtrace"
 )
 
 // InitDB initializes a database connection using the specified driver, connection string,
@@ -30,8 +31,16 @@ func InitDB(driver, dbConnString string, dbMaxOpenConns, dbMaxIdleConns int) (*s
 		return nil, errtrace.Wrap(errors.Join(ErrFailedToOpenDBConnection, err))
 	}
 
-	db.SetMaxOpenConns(dbMaxOpenConns)
-	db.SetMaxIdleConns(dbMaxIdleConns)
+	// Set db connection pool settings
+	if dbMaxOpenConns < dbMaxIdleConns {
+		dbMaxOpenConns = dbMaxIdleConns
+	}
+	if dbMaxIdleConns > 0 {
+		db.SetMaxOpenConns(dbMaxOpenConns)
+	}
+	if dbMaxIdleConns > 0 {
+		db.SetMaxIdleConns(dbMaxIdleConns)
+	}
 
 	// check db connection
 	if err := db.Ping(); err != nil {

@@ -61,3 +61,17 @@ tasks:
       - rm -rf ./bin
       - rm -rf ./vendor
       - echo "Project cleaned."
+
+  air:
+    desc: Build the application using air.
+    silent: true
+    preconditions:
+      - test -f .env
+    env:
+      CGO_ENABLED: 1
+    cmds:
+      - echo "Downloading the dependencies..."
+      - go mod download
+      - echo "Building the application..."
+      - go build -o ./tmp/app ./cmd/app/
+      - echo "Application built."

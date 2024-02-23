@@ -33,6 +33,10 @@ tasks:
     cmds:
       - echo "Cleaning the task cache and removing the .task directory..."
       - rm -rf .task
+      - rm -rf ./bin
+      - rm -rf ./tmp
+      - go clean -cache
+      - echo "Task cache cleaned."
 
   errtrace:
     desc: Instrument the code with error trace wrapper.
@@ -41,3 +45,19 @@ tasks:
     cmds:
       - echo "Adding errtrace to generated files..."
       - errtrace -w ./...
+
+  dev:
+    desc: Run the application in development mode.
+    silent: false
+    preconditions:
+      - test -f .env
+      - test -f ./scripts/.air.toml
+      - test -f ./db/local.db
+    deps:
+      - task: db:redis
+      - task: db:sqlc
+      - task: view
+      - task: errtrace
+    cmds:
+      - task: db:migrate
+      - air -c ./scripts/.air.toml

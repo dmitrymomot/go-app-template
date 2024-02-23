@@ -17,9 +17,13 @@ tasks:
     env:
       CGO_ENABLED: 1
     cmds:
-      - echo "Building the application..."
+      - echo "Cleaning the project cache..."
       - go clean -cache
+      - echo "Downloading the dependencies..."
       - go mod download
+      - echo "Adding errtrace to generated files..."
+      - errtrace -w ./...
+      - echo "Building the application..."
       - go build -o ./bin/app ./cmd/app/
       - echo "Application built."
     sources:
@@ -35,9 +39,11 @@ tasks:
     env:
       CGO_ENABLED: 1
     cmds:
-      - echo "Building the migrations runner..."
+      - echo "Cleaning the project cache..."
       - go clean -cache
+      - echo "Downloading the dependencies..."
       - go mod download
+      - echo "Building the migrations runner..."
       - go build -o ./bin/migrate ./cmd/migrate/
       - echo "Migrations runner built."
     sources:
@@ -55,3 +61,17 @@ tasks:
       - rm -rf ./bin
       - rm -rf ./vendor
       - echo "Project cleaned."
+
+  air:
+    desc: Build the application using air.
+    silent: true
+    preconditions:
+      - test -f .env
+    env:
+      CGO_ENABLED: 1
+    cmds:
+      - echo "Downloading the dependencies..."
+      - go mod download
+      - echo "Building the application..."
+      - go build -o ./tmp/app ./cmd/app/
+      - echo "Application built."

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/dmitrymomot/go-app-template/db/libsql"
+	libsql_remote "github.com/dmitrymomot/go-app-template/db/libsql/remote"
 	"github.com/dmitrymomot/go-app-template/db/migration"
 )
 
@@ -18,9 +18,9 @@ func main() {
 	logger.Info("Starting db migration...")
 
 	// Init db connection
-	db, err := libsql.Connect(dbConnString, 1, 1)
+	db, err := libsql_remote.Connect(dbConnString, 1, 1)
 	if err != nil {
-		logger.Fatalw("Failed to open db connection", "error", err)
+		logger.Fatalw("Failed to open remote db connection", "error", err)
 	}
 	defer db.Close()
 

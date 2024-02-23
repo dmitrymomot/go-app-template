@@ -7,10 +7,20 @@ import (
 	_ "github.com/joho/godotenv/autoload" // Load .env file automatically
 )
 
+// Enviroments
+const (
+	EnvLocal       = "local"
+	EnvDevelopment = "development"
+	EnvStaging     = "staging"
+	EnvProduction  = "production"
+	EnvTesting     = "testing"
+)
+
+// Predefined environment variables
 var (
 	// App
 	appName      = env.GetString("APP_NAME", "go-app-template")
-	appEnv       = env.GetString("APP_ENV", "local") // local, development, production
+	appEnv       = env.GetString("APP_ENV", EnvProduction) // local, development, production, testing
 	appDebugMode = env.GetBool("APP_DEBUG_MODE", false)
 	appLogLevel  = env.GetString("APP_LOG_LEVEL", "info") // debug, info, warn, error
 
@@ -42,6 +52,9 @@ var (
 	corsAllowedCredentials = env.GetBool("CORS_ALLOWED_CREDENTIALS", true)
 	corsMaxAge             = env.GetInt("CORS_MAX_AGE", 300)
 
+	// CSRF
+	csrfSecret = env.GetBytes("CSRF_SECRET", []byte("32-byte-long-auth-key"))
+
 	// Static
 	staticDir       = env.GetString("STATIC_DIR", "./web/static")   // Must be a relative path
 	staticURLPrefix = env.GetString("STATIC_URL_PREFIX", "/static") // Must start with a slash
@@ -49,4 +62,20 @@ var (
 
 	// Cache
 	disableHTTPCache = env.GetBool("DISABLE_HTTP_CACHE", true)
+
+	// Redis
+	redisConnString = env.GetString("REDIS_URL", "redis://localhost:6379/0")
+
+	// Session
+	sessionName   = env.GetString("SESSION_COOKIE_NAME", "session")
+	sessionPrefix = env.GetString("SESSION_PREFIX", "session:")
+	sessionTTL    = env.GetDuration("SESSION_TTL", 24*time.Hour)
+
+	// Postmark.
+	postmarkServerToken  = env.MustString("POSTMARK_SERVER_TOKEN")
+	postmarkAccountToken = env.MustString("POSTMARK_ACCOUNT_TOKEN")
+
+	// Email
+	emailFrom    = env.GetString("EMAIL_FROM", "notifications@localhost")
+	emailReplyTo = env.GetString("EMAIL_REPLY_TO", "no-reply@localhost")
 )

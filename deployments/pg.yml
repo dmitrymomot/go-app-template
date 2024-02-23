@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:alpine
+    container_name: app_template_postgres
+    environment:
+      POSTGRES_PASSWORD: pgpass
+      POSTGRES_USER: pguser
+      POSTGRES_DB: pgdb
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+volumes:
+  database_data:

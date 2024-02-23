@@ -1,20 +1,24 @@
 package main
 
 import (
-	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/alexedwards/scs/goredisstore"
+	"github.com/alexedwards/scs/v2"
+	"github.com/dmitrymomot/clientip"
 	"github.com/dmitrymomot/go-app-template/pkg/logger"
-	"github.com/dmitrymomot/go-app-template/web/views"
+	"github.com/dmitrymomot/go-app-template/web/templates/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httprate"
+	httprateredis "github.com/go-chi/httprate-redis"
+	"github.com/gorilla/csrf"
+	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
 )
 
@@ -22,15 +26,23 @@ import (
 // It sets up the middleware stack, handles CORS, disables caching in debug mode,
 // and registers default error handlers. It also handles serving static files
 // from the './web/static' subdirectory.
-func initRouter(ctx context.Context, db *sql.DB, log *zap.SugaredLogger) *chi.Mux {
+func initRouter(log *zap.SugaredLogger, redisClient *redis.Client) *chi.Mux {
 	r := chi.NewRouter()
 
 	// Middleware stack
 	r.Use(
 		middleware.Heartbeat("/health"),
 		middleware.ThrottleBacklog(httpTrottleLimit, httpTrottleBacklog, httpTrottleTimeout),
-		middleware.RealIP,
+		clientip.Middleware(),
 		httprate.LimitByRealIP(httpRequestLimit, httpRateLimitWindow), // Limit requests per IP
+		httprate.Limit(
+			httpRequestLimit,
+			httpRateLimitWindow,
+			httprate.WithKeyByIP(),
+			httprateredis.WithRedisLimitCounter(&httprateredis.Config{
+				Client: redisClient,
+			}),
+		),
 		logger.LogRequest(log),
 		middleware.Recoverer,
 		middleware.CleanPath,
@@ -54,12 +66,37 @@ func initRouter(ctx context.Context, db *sql.DB, log *zap.SugaredLogger) *chi.Mu
 		// TODO: route headers, useful for setting different routers for subdomains
 		// For more details, see https://go-chi.io/#/pages/middleware?id=routeheaders
 		// middleware.RouteHeaders(),
+
+		// CSRF protection
+		// For more details, see https://github.com/gorilla/csrf?tab=readme-ov-file#html-forms
+		csrf.Protect(csrfSecret,
+			csrf.RequestHeader("X-CSRF-Token"),
+			csrf.CookieName("X-CSRF-Token"),
+			csrf.FieldName("_csrf"),
+			csrf.SameSite(csrf.SameSiteLaxMode),
+			csrf.Secure(appEnv == "production"),
+			csrf.TrustedOrigins(corsAllowedOrigins), // Allow cross-domain CSRF use-cases
+			csrf.ErrorHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				sendErrorResponse(w, r, http.StatusForbidden, errors.New("CSRF token invalid"))
+			})),
+		),
 	)
 
 	// Disable caching
 	if disableHTTPCache {
 		r.Use(middleware.NoCache)
 	}
+
+	// Initialize a new session manager and configure the session lifetime.
+	sessionManager := scs.New()
+	sessionManager.Lifetime = sessionTTL
+	sessionManager.Cookie.Name = sessionName
+	sessionManager.Cookie.Secure = appEnv == EnvProduction
+	sessionManager.Cookie.Persist = true
+	sessionManager.Cookie.SameSite = http.SameSiteLaxMode
+	sessionManager.Cookie.HttpOnly = true
+	sessionManager.Store = goredisstore.NewWithPrefix(redisClient, sessionPrefix)
+	r.Use(sessionManager.LoadAndSave)
 
 	// Default error handlers
 	r.NotFound(notFoundHandler())
@@ -72,7 +109,9 @@ func initRouter(ctx context.Context, db *sql.DB, log *zap.SugaredLogger) *chi.Mu
 
 	// Static file serving from '/assets' subdirectory without directory listing.
 	if _, err := os.Stat(staticDir); !os.IsNotExist(err) {
-		fileServer(r, staticURLPrefix, http.Dir(staticDir), staticCacheTTL)
+		if err := fileServer(r, staticURLPrefix, http.Dir(staticDir), staticCacheTTL); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	return r
@@ -106,9 +145,12 @@ func methodNotAllowedHandler() func(w http.ResponseWriter, r *http.Request) {
 
 // Predefined http encoder content type
 const (
-	contentTypeHeader = "Content-Type"
-	contentTypeJSON   = "application/json; charset=utf-8"
-	contentTypeHTML   = "text/html; charset=utf-8"
+	contentTypeHeader  = "Content-Type"
+	contextTypeCharset = "charset=utf-8"
+	contentTypeJSON    = "application/json"
+	contentTypeHTML    = "text/html"
+	contentTypeJSONUTF = contentTypeJSON + "; " + contextTypeCharset
+	contentTypeHTMLUTF = contentTypeHTML + "; " + contextTypeCharset
 )
 
 // Helper function to check if an error code is valid
@@ -118,7 +160,7 @@ func isValidErrorCode(errCode int) bool {
 
 // Is request a json request?
 func isJsonRequest(r *http.Request) bool {
-	return strings.Contains(strings.ToLower(r.Header.Get(contentTypeHeader)), "application/json")
+	return strings.Contains(strings.ToLower(r.Header.Get(contentTypeHeader)), contentTypeJSON)
 }
 
 // Helper function to send an error response
@@ -128,7 +170,7 @@ func sendErrorResponse(w http.ResponseWriter, r *http.Request, statusCode int, e
 	}
 
 	if isJsonRequest(r) {
-		w.Header().Set(contentTypeHeader, contentTypeJSON)
+		w.Header().Set(contentTypeHeader, contentTypeJSONUTF)
 		w.WriteHeader(statusCode)
 		if err := json.NewEncoder(w).Encode(map[string]interface{}{
 			"error": err.Error(),
@@ -138,7 +180,7 @@ func sendErrorResponse(w http.ResponseWriter, r *http.Request, statusCode int, e
 		return
 	}
 
-	w.Header().Set(contentTypeHeader, contentTypeHTML)
+	w.Header().Set(contentTypeHeader, contentTypeHTMLUTF)
 	w.WriteHeader(statusCode)
 	if err := views.ErrorPage(statusCode, err.Error()).Render(r.Context(), w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

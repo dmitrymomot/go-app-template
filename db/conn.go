@@ -3,6 +3,8 @@ package db
 import (
 	"database/sql"
 	"errors"
+
+	"braces.dev/errtrace"
 )
 
 // InitDB initializes a database connection using the specified driver, connection string,
@@ -11,10 +13,10 @@ import (
 func InitDB(driver, dbConnString string, dbMaxOpenConns, dbMaxIdleConns int) (*sql.DB, error) {
 	// Validate input parameters
 	if dbConnString == "" {
-		return nil, ErrEmptyDBConnString
+		return nil, errtrace.Wrap(ErrEmptyDBConnString)
 	}
 	if driver == "" {
-		return nil, ErrUndefinedDBDriver
+		return nil, errtrace.Wrap(ErrUndefinedDBDriver)
 	}
 	if dbMaxOpenConns <= 0 {
 		dbMaxOpenConns = 1
@@ -26,15 +28,23 @@ func InitDB(driver, dbConnString string, dbMaxOpenConns, dbMaxIdleConns int) (*s
 	// Init db connection
 	db, err := sql.Open(driver, dbConnString)
 	if err != nil {
-		return nil, errors.Join(ErrFailedToOpenDBConnection, err)
+		return nil, errtrace.Wrap(errors.Join(ErrFailedToOpenDBConnection, err))
 	}
 
-	db.SetMaxOpenConns(dbMaxOpenConns)
-	db.SetMaxIdleConns(dbMaxIdleConns)
+	// Set db connection pool settings
+	if dbMaxOpenConns < dbMaxIdleConns {
+		dbMaxOpenConns = dbMaxIdleConns
+	}
+	if dbMaxIdleConns > 0 {
+		db.SetMaxOpenConns(dbMaxOpenConns)
+	}
+	if dbMaxIdleConns > 0 {
+		db.SetMaxIdleConns(dbMaxIdleConns)
+	}
 
 	// check db connection
 	if err := db.Ping(); err != nil {
-		return nil, errors.Join(ErrFailedToPingDB, err)
+		return nil, errtrace.Wrap(errors.Join(ErrFailedToPingDB, err))
 	}
 
 	return db, nil

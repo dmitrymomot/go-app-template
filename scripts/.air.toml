@@ -1,0 +1,33 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+bin = "./tmp/app"
+pre_cmd = ["task view"]
+cmd = "task build:air"
+delay = 1000
+exclude_dir = ["assets", "tmp", "vendor"]
+exclude_file = []
+exclude_regex = [".*_templ.go"]
+exclude_unchanged = false
+follow_symlink = false
+full_bin = ""
+include_dir = ["web/templates/views", "web/src"]
+include_ext = ["templ", "css"]
+kill_delay = "0s"
+log = "build-errors.log"
+send_interrupt = true
+stop_on_error = true
+
+[color]
+app = ""
+build = "yellow"
+main = "magenta"
+runner = "green"
+watcher = "cyan"
+
+[log]
+time = true
+
+[misc]
+clean_on_exit = true

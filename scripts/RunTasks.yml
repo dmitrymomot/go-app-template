@@ -22,6 +22,7 @@ tasks:
         sh: git log -n 1 --format=%h
     cmds:
       - go clean -cache
+      - errtrace -w ./...
       - echo "Running the application on http://localhost:{{.HTTP_PORT}}"
       - go run ./cmd/app/
 

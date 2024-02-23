@@ -4,17 +4,18 @@ import (
 	"database/sql"
 	"errors"
 
+	"braces.dev/errtrace"
 	migrate "github.com/rubenv/sql-migrate"
 )
 
 // Up applies all available migrations.
 func Up(db *sql.DB, driver, migrationsTable, migrationsDir string) (int, error) {
-	return Run(db, driver, migrationsTable, migrationsDir, migrate.Up)
+	return errtrace.Wrap2(Run(db, driver, migrationsTable, migrationsDir, migrate.Up))
 }
 
 // Down rolls back all migrations.
 func Down(db *sql.DB, driver, migrationsTable, migrationsDir string) (int, error) {
-	return Run(db, driver, migrationsTable, migrationsDir, migrate.Down)
+	return errtrace.Wrap2(Run(db, driver, migrationsTable, migrationsDir, migrate.Down))
 }
 
 // Run executes database migrations using the provided parameters.
@@ -24,10 +25,10 @@ func Down(db *sql.DB, driver, migrationsTable, migrationsDir string) (int, error
 func Run(db *sql.DB, driver, migrationsTable, migrationsDir string, direction migrate.MigrationDirection) (int, error) {
 	// Validate input parameters
 	if db == nil {
-		return 0, ErrMissedDBConnection
+		return 0, errtrace.Wrap(ErrMissedDBConnection)
 	}
 	if driver == "" {
-		return 0, ErrUndefinedDBDriver
+		return 0, errtrace.Wrap(ErrUndefinedDBDriver)
 	}
 	if migrationsTable == "" {
 		migrationsTable = "migrations"
@@ -47,7 +48,7 @@ func Run(db *sql.DB, driver, migrationsTable, migrationsDir string, direction mi
 	// Apply migrations
 	n, err := m.Exec(db, driver, migrations, direction)
 	if err != nil {
-		return 0, errors.Join(ErrFailedToApplyMigrations, err)
+		return 0, errtrace.Wrap(errors.Join(ErrFailedToApplyMigrations, err))
 	}
 
 	return n, nil

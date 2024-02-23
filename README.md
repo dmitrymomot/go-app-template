@@ -13,7 +13,7 @@ A **full-stack** app template based on Golang and featuring TailwindCSS for styl
 
 ## Motivaton
 
-The main goal of this project is to provide a simple and efficient way to build web applications using Golang. The project is designed to be a starting point for building web applications, providing a basic structure and a set of tools to help you get started.
+The main goal of this project is to provide a simple and efficient way to build web applications using Golang. The project is designed to be a starting point for building full-stack web applications, providing a basic structure and a set of tools to help you get started.
 
 ### Why HTMX?
 

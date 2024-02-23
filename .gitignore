@@ -18,10 +18,15 @@ bin/
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
+vendor/
 
 # Go workspace file
 go.work
+
+# templ watch artifacts
+web/templates/**/*.txt
+
+# Other files and directories
 .task/
 .env
 tmp/

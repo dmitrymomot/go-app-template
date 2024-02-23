@@ -11,6 +11,8 @@ import (
 	"github.com/dmitrymomot/asyncer"
 	libsql_remote "github.com/dmitrymomot/go-app-template/db/libsql/remote"
 	"github.com/dmitrymomot/httpserver"
+	"github.com/dmitrymomot/mailer"
+	"github.com/dmitrymomot/mailer/adapters/postmark"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/sync/errgroup"
 )
@@ -53,6 +55,22 @@ func main() {
 	enqueuer := asyncer.MustNewEnqueuer(redisConnString)
 	defer enqueuer.Close()
 
+	// Create a new email provider client.
+	postmarkAdapter, err := postmark.New(postmarkServerToken, postmarkAccountToken, postmark.Config{
+		From:       emailFrom,
+		ReplyTo:    emailReplyTo,
+		TrackOpens: true,
+		TrackLinks: true,
+	})
+	if err != nil {
+		mainLogger.Fatalw("Failed to create postmark adapter", "error", err)
+	}
+	_ = postmarkAdapter
+
+	// Create a new mail enqueuer.
+	mailEnqueuer := mailer.NewEnqueuer(enqueuer)
+	_ = mailEnqueuer // TODO: remove this line and use the mailEnqueuer to send emails via the queue.
+
 	// Init router
 	r := initRouter(logger, redisClient)
 
@@ -78,8 +96,8 @@ func main() {
 	// Run a new queue server with redis as the broker.
 	eg.Go(asyncer.RunQueueServer(
 		ctx, redisConnString, logger,
-		// Register a handler for the task.
-		// asyncer.ScheduledHandlerFunc(TestTaskName, testTaskHandler),
+		// Register the task handlers.
+		mailer.SendEmailHandler(postmarkAdapter), // Register the send_email task handler.
 		// ... add more handlers here ...
 	))
 

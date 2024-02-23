@@ -70,4 +70,12 @@ var (
 	sessionName   = env.GetString("SESSION_COOKIE_NAME", "session")
 	sessionPrefix = env.GetString("SESSION_PREFIX", "session:")
 	sessionTTL    = env.GetDuration("SESSION_TTL", 24*time.Hour)
+
+	// Postmark.
+	postmarkServerToken  = env.MustString("POSTMARK_SERVER_TOKEN")
+	postmarkAccountToken = env.MustString("POSTMARK_ACCOUNT_TOKEN")
+
+	// Email
+	emailFrom    = env.GetString("EMAIL_FROM", "notifications@localhost")
+	emailReplyTo = env.GetString("EMAIL_REPLY_TO", "no-reply@localhost")
 )

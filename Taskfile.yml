@@ -52,7 +52,7 @@ tasks:
     preconditions:
       - test -f .env
       - test -f ./scripts/.air.toml
-      - test -f ./db/local.db
+      - test -f {{.DATABASE_FILEPATH}}
     deps:
       - task: db:redis
       - task: db:sqlc

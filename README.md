@@ -28,6 +28,7 @@ The main goal of this project is to provide a simple and efficient way to build 
 - [ ] In-memory SQLite database for testing instead of mocks.
 - [x] [Templ](https://templ.guide) for component-style templating (similar to ReactJs)
 - [x] Session management (using [alexedwards/scs](https://github.com/alexedwards/scs))
+- [x] Hot-reloading for development (using [air](https://github.com/cosmtrek/air))
 - [x] Static file serving
 - [x] Jobs and workers for background tasks (using [asyncer](https://github.com/dmitrymomot/asyncer))
 - [x] Cron jobs for scheduled tasks (using [asyncer](https://github.com/dmitrymomot/asyncer) too)

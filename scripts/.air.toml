@@ -30,4 +30,4 @@ watcher = "cyan"
 time = true
 
 [misc]
-clean_on_exit = false
+clean_on_exit = true

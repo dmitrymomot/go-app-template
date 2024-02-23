@@ -17,11 +17,13 @@ tasks:
       - brew install mockery # Install Mockery (mocks generator)
       - task: install-tailwindcss
       - go install braces.dev/errtrace/cmd/errtrace@latest
+      - go install github.com/cosmtrek/air@latest
     generates:
       - /opt/homebrew/bin/turso
       - /opt/homebrew/bin/sqlc
       - /opt/homebrew/bin/mockery
       - $HOME/go/bin/errtrace
+      - $HOME/go/bin/air
 
   update:
     desc: Update dependencies for local development.
@@ -33,17 +35,20 @@ tasks:
       - brew upgrade mockery # Update Mockery (mocks generator)
       - task: update-tailwindcss
       - go install braces.dev/errtrace/cmd/errtrace@latest
+      - go install github.com/cosmtrek/air@latest
 
   check:
     desc: Check if all dependencies are installed.
     silent: true
     aliases: [check-deps, check-dependencies]
     cmds:
+      - command -v go
       - command -v turso
       - command -v sqlc
       - command -v mockery
       - command -v tailwindcss
       - command -v errtrace
+      - command -v air
 
   install-tailwindcss:
     desc: Install Tailwind CSS for the web application.

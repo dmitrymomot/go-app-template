@@ -16,6 +16,8 @@ tasks:
       - test -f .env
     env:
       CGO_ENABLED: 1
+      COMMIT_HASH:
+        sh: git log -n 1 --format=%h
     cmds:
       - echo "Cleaning the project cache..."
       - go clean -cache
@@ -38,6 +40,8 @@ tasks:
       - test -f .env
     env:
       CGO_ENABLED: 1
+      COMMIT_HASH:
+        sh: git log -n 1 --format=%h
     cmds:
       - echo "Cleaning the project cache..."
       - go clean -cache
@@ -69,6 +73,8 @@ tasks:
       - test -f .env
     env:
       CGO_ENABLED: 1
+      COMMIT_HASH:
+        sh: git log -n 1 --format=%h
     cmds:
       - echo "Downloading the dependencies..."
       - go mod download

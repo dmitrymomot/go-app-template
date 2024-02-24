@@ -53,6 +53,10 @@ tasks:
       - test -f .env
       - test -f ./scripts/.air.toml
       - test -f {{.DATABASE_FILEPATH}}
+    env:
+      CGO_ENABLED: 1
+      COMMIT_HASH:
+        sh: git log -n 1 --format=%h
     deps:
       - task: db:redis
       - task: db:sqlc

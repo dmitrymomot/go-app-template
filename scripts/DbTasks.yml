@@ -38,8 +38,14 @@ tasks:
     desc: Generate code from SQL queries.
     silent: true
     dir: ./db
+    preconditions:
+      - command -v sqlc
+      - command -v errtrace
     cmds:
+      - echo "Generating code from SQL queries..."
       - sqlc generate
+      - echo "Adding errtrace to generated files..."
+      - errtrace -w ./repository/...
 
   new-migration:
     desc: Create new migration.

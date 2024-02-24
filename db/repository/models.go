@@ -6,10 +6,19 @@ package repository
 
 import (
 	"database/sql"
+	"time"
 )
 
-type Author struct {
-	ID   int64
-	Name string
-	Bio  sql.NullString
+type User struct {
+	ID        string
+	Email     string
+	Password  sql.NullString
+	CreatedAt time.Time
+}
+
+type UserSocialProfile struct {
+	UserID     string
+	SocialID   string
+	SocialName string
+	CreatedAt  sql.NullTime
 }

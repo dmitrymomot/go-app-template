@@ -9,11 +9,32 @@ import (
 )
 
 type Querier interface {
-	CreateAuthor(ctx context.Context, arg CreateAuthorParams) (Author, error)
-	DeleteAuthor(ctx context.Context, id int64) error
-	GetAuthor(ctx context.Context, id int64) (Author, error)
-	ListAuthors(ctx context.Context) ([]Author, error)
-	UpdateAuthor(ctx context.Context, arg UpdateAuthorParams) error
+	// CreateUser: Create a new user in the database
+	CreateUser(ctx context.Context, arg CreateUserParams) error
+	// CreateUserSocialProfile: Link a user to a social profile
+	CreateUserSocialProfile(ctx context.Context, arg CreateUserSocialProfileParams) error
+	// DeleteUser: Delete a user from the database
+	DeleteUser(ctx context.Context, id string) error
+	// DeleteUserSocialProfileBySocialID: Delete a user's social profile by social id and social name
+	DeleteUserSocialProfileBySocialID(ctx context.Context, arg DeleteUserSocialProfileBySocialIDParams) error
+	// DeleteUserSocialProfilesByUserID: Delete a user's social profiles by user id
+	DeleteUserSocialProfilesByUserID(ctx context.Context, userID string) error
+	// GetUserByEmail: Get a user by email
+	GetUserByEmail(ctx context.Context, email string) (User, error)
+	// GetUserByID: Get a user by id
+	GetUserByID(ctx context.Context, id string) (User, error)
+	// GetUserSocialProfileBySocialID: Get a user's social profile by social id and social name
+	GetUserSocialProfileBySocialID(ctx context.Context, arg GetUserSocialProfileBySocialIDParams) (UserSocialProfile, error)
+	// GetUserSocialProfilesByUserID: Get a user's social profiles by user id
+	GetUserSocialProfilesByUserID(ctx context.Context, userID string) ([]UserSocialProfile, error)
+	// GetUsers: Get user list with pagination
+	GetUsers(ctx context.Context, arg GetUsersParams) ([]User, error)
+	// GetUsersCount: Get total user count
+	GetUsersCount(ctx context.Context) (int64, error)
+	// UpdateUserEmail: Update a user's email
+	UpdateUserEmail(ctx context.Context, arg UpdateUserEmailParams) error
+	// UpdateUserPassword: Update a user's password
+	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 }
 
 var _ Querier = (*Queries)(nil)

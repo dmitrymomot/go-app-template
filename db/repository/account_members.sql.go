@@ -11,6 +11,34 @@ import (
 	"database/sql"
 )
 
+const countAccountMembers = `-- name: CountAccountMembers :one
+SELECT COUNT(user_id) as count
+FROM account_members
+WHERE account_id = ?1
+`
+
+// CountAccountMembers: retrieves members number of an account
+func (q *Queries) CountAccountMembers(ctx context.Context, accountID string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countAccountMembers, accountID)
+	var count int64
+	err := row.Scan(&count)
+	return count, errtrace.Wrap(err)
+}
+
+const countUserAccounts = `-- name: CountUserAccounts :one
+SELECT COUNT(account_id) as count
+FROM account_members
+WHERE user_id = ?1
+`
+
+// CountUserAccounts: retrieves accounts number of a user
+func (q *Queries) CountUserAccounts(ctx context.Context, userID string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countUserAccounts, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, errtrace.Wrap(err)
+}
+
 const createAccountMember = `-- name: CreateAccountMember :exec
 INSERT INTO account_members (id, account_id, user_id, name, role, avatar_url) VALUES (?1, ?2, ?3, ?4, ?5, ?6)
 `

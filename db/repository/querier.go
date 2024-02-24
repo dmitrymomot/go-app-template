@@ -9,6 +9,10 @@ import (
 )
 
 type Querier interface {
+	// CountAccountMembers: retrieves members number of an account
+	CountAccountMembers(ctx context.Context, accountID string) (int64, error)
+	// CountUserAccounts: retrieves accounts number of a user
+	CountUserAccounts(ctx context.Context, userID string) (int64, error)
 	// CreateAccount: creates an account for a user
 	CreateAccount(ctx context.Context, arg CreateAccountParams) error
 	// CreateAccountMember: creates a member for an account
@@ -41,6 +45,8 @@ type Querier interface {
 	GetAccountMemberByUserID(ctx context.Context, arg GetAccountMemberByUserIDParams) (AccountMember, error)
 	// GetAccountMembers: retrieves members list of an account with pagination
 	GetAccountMembers(ctx context.Context, arg GetAccountMembersParams) ([]AccountMember, error)
+	// GetAccountUsers: retrieves users list of an account with pagination
+	GetAccountUsers(ctx context.Context, arg GetAccountUsersParams) ([]GetAccountUsersRow, error)
 	// GetUserAccounts: retrieves accounts list of a user with pagination
 	GetUserAccounts(ctx context.Context, arg GetUserAccountsParams) ([]GetUserAccountsRow, error)
 	// GetUserByEmail: Get a user by email

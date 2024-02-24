@@ -32,3 +32,15 @@ DELETE FROM account_members WHERE account_id = @account_id;
 -- name: DeleteAccountMembersByUserID :exec
 -- DeleteAccountMembersByUserID: deletes all members across all accounts for a user
 DELETE FROM account_members WHERE user_id = @user_id;
+
+-- name: CountAccountMembers :one
+-- CountAccountMembers: retrieves members number of an account
+SELECT COUNT(user_id) as count
+FROM account_members
+WHERE account_id = @account_id;
+
+-- name: CountUserAccounts :one
+-- CountUserAccounts: retrieves accounts number of a user
+SELECT COUNT(account_id) as count
+FROM account_members
+WHERE user_id = @user_id;

@@ -6,3 +6,12 @@ JOIN accounts ON accounts.id = account_members.account_id
 WHERE account_members.user_id = @user_id
 ORDER BY account_members.created_at DESC
 LIMIT @limit_val OFFSET @offset_val;
+
+-- name: GetAccountUsers :many
+-- GetAccountUsers: retrieves users list of an account with pagination
+SELECT sqlc.embed(users), sqlc.embed(account_members)
+FROM account_members
+JOIN users ON users.id = account_members.user_id
+WHERE account_members.account_id = @account_id
+ORDER BY account_members.created_at DESC
+LIMIT @limit_val OFFSET @offset_val;

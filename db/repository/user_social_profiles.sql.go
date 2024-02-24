@@ -11,38 +11,49 @@ import (
 )
 
 const createUserSocialProfile = `-- name: CreateUserSocialProfile :exec
-INSERT INTO user_social_profiles (user_id, social_id, social_name) VALUES (?1, ?2, ?3)
+INSERT INTO user_external_profiles (user_id, provider_id, provider_type, external_account_id)
+VALUES (?1, ?2, ?3, ?4)
 `
 
 type CreateUserSocialProfileParams struct {
-	UserID     string
-	SocialID   string
-	SocialName string
+	UserID            string
+	ProviderID        string
+	ProviderType      string
+	ExternalAccountID string
 }
 
 // CreateUserSocialProfile: Link a user to a social profile
 func (q *Queries) CreateUserSocialProfile(ctx context.Context, arg CreateUserSocialProfileParams) error {
-	_, err := q.db.ExecContext(ctx, createUserSocialProfile, arg.UserID, arg.SocialID, arg.SocialName)
+	_, err := q.db.ExecContext(ctx, createUserSocialProfile,
+		arg.UserID,
+		arg.ProviderID,
+		arg.ProviderType,
+		arg.ExternalAccountID,
+	)
 	return errtrace.Wrap(err)
 }
 
 const deleteUserSocialProfileBySocialID = `-- name: DeleteUserSocialProfileBySocialID :exec
-DELETE FROM user_social_profiles WHERE social_id = ?1 AND social_name = ?2
+DELETE FROM user_external_profiles
+WHERE external_account_id = ?1
+AND provider_type = ?2
+AND provider_id = ?3
 `
 
 type DeleteUserSocialProfileBySocialIDParams struct {
-	SocialID   string
-	SocialName string
+	ExternalAccountID string
+	ProviderType      string
+	ProviderID        string
 }
 
 // DeleteUserSocialProfileBySocialID: Delete a user's social profile by social id and social name
 func (q *Queries) DeleteUserSocialProfileBySocialID(ctx context.Context, arg DeleteUserSocialProfileBySocialIDParams) error {
-	_, err := q.db.ExecContext(ctx, deleteUserSocialProfileBySocialID, arg.SocialID, arg.SocialName)
+	_, err := q.db.ExecContext(ctx, deleteUserSocialProfileBySocialID, arg.ExternalAccountID, arg.ProviderType, arg.ProviderID)
 	return errtrace.Wrap(err)
 }
 
 const deleteUserSocialProfilesByUserID = `-- name: DeleteUserSocialProfilesByUserID :exec
-DELETE FROM user_social_profiles WHERE user_id = ?1
+DELETE FROM user_external_profiles WHERE user_id = ?1
 `
 
 // DeleteUserSocialProfilesByUserID: Delete a user's social profiles by user id
@@ -52,45 +63,51 @@ func (q *Queries) DeleteUserSocialProfilesByUserID(ctx context.Context, userID s
 }
 
 const getUserSocialProfileBySocialID = `-- name: GetUserSocialProfileBySocialID :one
-SELECT user_id, social_id, social_name, created_at FROM user_social_profiles WHERE social_id = ?1 AND social_name = ?2
+SELECT user_id, provider_id, provider_type, external_account_id, created_at FROM user_external_profiles
+WHERE external_account_id = ?1
+AND provider_type = ?2
+AND provider_id = ?3
 `
 
 type GetUserSocialProfileBySocialIDParams struct {
-	SocialID   string
-	SocialName string
+	ExternalAccountID string
+	ProviderType      string
+	ProviderID        string
 }
 
 // GetUserSocialProfileBySocialID: Get a user's social profile by social id and social name
-func (q *Queries) GetUserSocialProfileBySocialID(ctx context.Context, arg GetUserSocialProfileBySocialIDParams) (UserSocialProfile, error) {
-	row := q.db.QueryRowContext(ctx, getUserSocialProfileBySocialID, arg.SocialID, arg.SocialName)
-	var i UserSocialProfile
+func (q *Queries) GetUserSocialProfileBySocialID(ctx context.Context, arg GetUserSocialProfileBySocialIDParams) (UserExternalProfile, error) {
+	row := q.db.QueryRowContext(ctx, getUserSocialProfileBySocialID, arg.ExternalAccountID, arg.ProviderType, arg.ProviderID)
+	var i UserExternalProfile
 	err := row.Scan(
 		&i.UserID,
-		&i.SocialID,
-		&i.SocialName,
+		&i.ProviderID,
+		&i.ProviderType,
+		&i.ExternalAccountID,
 		&i.CreatedAt,
 	)
 	return i, errtrace.Wrap(err)
 }
 
 const getUserSocialProfilesByUserID = `-- name: GetUserSocialProfilesByUserID :many
-SELECT user_id, social_id, social_name, created_at FROM user_social_profiles WHERE user_id = ?1 ORDER BY created_at DESC
+SELECT user_id, provider_id, provider_type, external_account_id, created_at FROM user_external_profiles WHERE user_id = ?1 ORDER BY created_at DESC
 `
 
 // GetUserSocialProfilesByUserID: Get a user's social profiles by user id
-func (q *Queries) GetUserSocialProfilesByUserID(ctx context.Context, userID string) ([]UserSocialProfile, error) {
+func (q *Queries) GetUserSocialProfilesByUserID(ctx context.Context, userID string) ([]UserExternalProfile, error) {
 	rows, err := q.db.QueryContext(ctx, getUserSocialProfilesByUserID, userID)
 	if err != nil {
 		return nil, errtrace.Wrap(err)
 	}
 	defer rows.Close()
-	var items []UserSocialProfile
+	var items []UserExternalProfile
 	for rows.Next() {
-		var i UserSocialProfile
+		var i UserExternalProfile
 		if err := rows.Scan(
 			&i.UserID,
-			&i.SocialID,
-			&i.SocialName,
+			&i.ProviderID,
+			&i.ProviderType,
+			&i.ExternalAccountID,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, errtrace.Wrap(err)

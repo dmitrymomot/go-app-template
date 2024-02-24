@@ -9,28 +9,56 @@ import (
 )
 
 type Querier interface {
+	// CreateAccount: creates an account for a user
+	CreateAccount(ctx context.Context, arg CreateAccountParams) error
+	// CreateAccountMember: creates a member for an account
+	CreateAccountMember(ctx context.Context, arg CreateAccountMemberParams) error
 	// CreateUser: Create a new user in the database
 	CreateUser(ctx context.Context, arg CreateUserParams) error
 	// CreateUserSocialProfile: Link a user to a social profile
 	CreateUserSocialProfile(ctx context.Context, arg CreateUserSocialProfileParams) error
+	// DeleteAccount: deletes an account
+	DeleteAccount(ctx context.Context, id string) error
+	// DeleteAccountMember: deletes a member of an account
+	DeleteAccountMember(ctx context.Context, id string) error
+	// DeleteAccountMembersByAccountID: deletes all members of an account
+	DeleteAccountMembersByAccountID(ctx context.Context, accountID string) error
+	// DeleteAccountMembersByUserID: deletes all members across all accounts for a user
+	DeleteAccountMembersByUserID(ctx context.Context, userID string) error
 	// DeleteUser: Delete a user from the database
 	DeleteUser(ctx context.Context, id string) error
 	// DeleteUserSocialProfileBySocialID: Delete a user's social profile by social id and social name
 	DeleteUserSocialProfileBySocialID(ctx context.Context, arg DeleteUserSocialProfileBySocialIDParams) error
 	// DeleteUserSocialProfilesByUserID: Delete a user's social profiles by user id
 	DeleteUserSocialProfilesByUserID(ctx context.Context, userID string) error
+	// GetAccount: retrieves an account by its id
+	GetAccount(ctx context.Context, id string) (Account, error)
+	// GetAccountByName: retrieves an account by its name
+	GetAccountByName(ctx context.Context, name string) (Account, error)
+	// GetAccountMember: retrieves a member of an account by its id
+	GetAccountMemberByID(ctx context.Context, id string) (AccountMember, error)
+	// GetAccountMemberByUserID: retrieves a member of an account by its user_id
+	GetAccountMemberByUserID(ctx context.Context, arg GetAccountMemberByUserIDParams) (AccountMember, error)
+	// GetAccountMembers: retrieves members list of an account with pagination
+	GetAccountMembers(ctx context.Context, arg GetAccountMembersParams) ([]AccountMember, error)
+	// GetUserAccounts: retrieves accounts list of a user with pagination
+	GetUserAccounts(ctx context.Context, arg GetUserAccountsParams) ([]GetUserAccountsRow, error)
 	// GetUserByEmail: Get a user by email
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	// GetUserByID: Get a user by id
 	GetUserByID(ctx context.Context, id string) (User, error)
 	// GetUserSocialProfileBySocialID: Get a user's social profile by social id and social name
-	GetUserSocialProfileBySocialID(ctx context.Context, arg GetUserSocialProfileBySocialIDParams) (UserSocialProfile, error)
+	GetUserSocialProfileBySocialID(ctx context.Context, arg GetUserSocialProfileBySocialIDParams) (UserExternalProfile, error)
 	// GetUserSocialProfilesByUserID: Get a user's social profiles by user id
-	GetUserSocialProfilesByUserID(ctx context.Context, userID string) ([]UserSocialProfile, error)
+	GetUserSocialProfilesByUserID(ctx context.Context, userID string) ([]UserExternalProfile, error)
 	// GetUsers: Get user list with pagination
 	GetUsers(ctx context.Context, arg GetUsersParams) ([]User, error)
 	// GetUsersCount: Get total user count
 	GetUsersCount(ctx context.Context) (int64, error)
+	// UpdateAccount: updates an account
+	UpdateAccount(ctx context.Context, arg UpdateAccountParams) error
+	// UpdateAccountMember: updates a member of an account
+	UpdateAccountMember(ctx context.Context, arg UpdateAccountMemberParams) error
 	// UpdateUserEmail: Update a user's email
 	UpdateUserEmail(ctx context.Context, arg UpdateUserEmailParams) error
 	// UpdateUserPassword: Update a user's password

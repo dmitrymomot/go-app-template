@@ -9,16 +9,36 @@ import (
 	"time"
 )
 
-type User struct {
+type Account struct {
 	ID        string
-	Email     string
-	Password  sql.NullString
+	Name      string
+	Title     sql.NullString
+	LogoUrl   sql.NullString
 	CreatedAt time.Time
 }
 
-type UserSocialProfile struct {
-	UserID     string
-	SocialID   string
-	SocialName string
-	CreatedAt  sql.NullTime
+type AccountMember struct {
+	ID        string
+	AccountID string
+	UserID    string
+	Name      sql.NullString
+	Role      sql.NullString
+	AvatarUrl sql.NullString
+	CreatedAt time.Time
+}
+
+type User struct {
+	ID         string
+	Email      string
+	Password   sql.NullString
+	CreatedAt  time.Time
+	VerifiedAt sql.NullTime
+}
+
+type UserExternalProfile struct {
+	UserID            string
+	ProviderID        string
+	ProviderType      string
+	ExternalAccountID string
+	CreatedAt         sql.NullTime
 }

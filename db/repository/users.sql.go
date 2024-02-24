@@ -45,7 +45,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id string) error {
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, password, created_at FROM users WHERE email = ?1
+SELECT id, email, password, created_at, verified_at FROM users WHERE email = ?1
 `
 
 // GetUserByEmail: Get a user by email
@@ -57,12 +57,13 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.Email,
 		&i.Password,
 		&i.CreatedAt,
+		&i.VerifiedAt,
 	)
 	return i, errtrace.Wrap(err)
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, email, password, created_at FROM users WHERE id = ?1
+SELECT id, email, password, created_at, verified_at FROM users WHERE id = ?1
 `
 
 // GetUserByID: Get a user by id
@@ -74,12 +75,13 @@ func (q *Queries) GetUserByID(ctx context.Context, id string) (User, error) {
 		&i.Email,
 		&i.Password,
 		&i.CreatedAt,
+		&i.VerifiedAt,
 	)
 	return i, errtrace.Wrap(err)
 }
 
 const getUsers = `-- name: GetUsers :many
-SELECT id, email, password, created_at FROM users ORDER BY created_at DESC LIMIT ?2 OFFSET ?1
+SELECT id, email, password, created_at, verified_at FROM users ORDER BY created_at DESC LIMIT ?2 OFFSET ?1
 `
 
 type GetUsersParams struct {
@@ -102,6 +104,7 @@ func (q *Queries) GetUsers(ctx context.Context, arg GetUsersParams) ([]User, err
 			&i.Email,
 			&i.Password,
 			&i.CreatedAt,
+			&i.VerifiedAt,
 		); err != nil {
 			return nil, errtrace.Wrap(err)
 		}

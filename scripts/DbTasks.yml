@@ -65,6 +65,9 @@ tasks:
     preconditions:
       - test -f .env
       - command -v ./bin/migrate
+    env:
+      COMMIT_HASH:
+        sh: git log -n 1 --format=%h
     cmds:
       - ./bin/migrate
     # sources:
@@ -78,6 +81,9 @@ tasks:
     preconditions:
       - test -f .env
       - command -v ./bin/migrate
+    env:
+      COMMIT_HASH:
+        sh: git log -n 1 --format=%h
     cmds:
       - ./bin/migrate -rollback
     # sources:

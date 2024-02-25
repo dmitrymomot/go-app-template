@@ -9,11 +9,24 @@
 [![GolangCI Lint](https://github.com/dmitrymomot/go-app-template/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/dmitrymomot/go-app-template/actions/workflows/golangci-lint.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/dmitrymomot/go-app-template)](https://goreportcard.com/report/github.com/dmitrymomot/go-app-template)
 
-A **full-stack** app template based on Golang and featuring TailwindCSS for styling, HTMX for dynamic UIs, Postgres/SQLite/TursoDB (libSQL) for efficient data management, and Templ for component-style templating  (similar to ReactJs), streamlining web development workflows.
+A **full-stack monolithic app template** based on Golang and featuring TailwindCSS for styling, HTMX for dynamic UIs, Postgres/SQLite/TursoDB (libSQL) for efficient data management, and Templ for component-style templating  (similar to ReactJs), streamlining web development workflows.
 
 ## Motivaton
 
 The main goal of this project is to provide a simple and efficient way to build web applications using Golang. The project is designed to be a starting point for building full-stack web applications, providing a basic structure and a set of tools to help you get started.
+
+### Why monolithic architecture?
+
+For me, a monolithic architecture offers key advantages, especially during the initial phases of development and growth:
+
+- **Simplicity**: Streamlines development, testing, deployment, and management, crucial for limited-resource scenarios.
+- **Rapid Iteration**: Facilitates quick updates and feature additions in response to user feedback and market demands.
+- **Operational Efficiency**: Lowers service orchestration and data consistency complexity, ideal for solopreneurs/small teams.
+- **Cost-Effectiveness**: Reduces initial operational costs by running on minimal resources compared to distributed systems.
+- **Scalability**: Early-stage scaling can be achieved by running multiple instances, avoiding microservices' scaling complexities.
+- **Focus on Core Features**: Allows me (or you) to concentrate on delivering core value without the overhead of managing a distributed system.
+
+You can design your monolith with modularity to ease future transitions or refactoring, ensuring your architecture can evolve with your product. This approach balances initial simplicity and agility with long-term flexibility.
 
 ### Why HTMX?
 
@@ -43,7 +56,6 @@ The main goal of this project is to provide a simple and efficient way to build 
 - [ ] Authentication and authorization via Email/Password, OAuth2 (Google, Facebook, Twitter, GitHub, etc.).
 - [ ] Forgot password and email verification
 - [ ] Two-factor authentication
-
 
 ## Getting Started
 

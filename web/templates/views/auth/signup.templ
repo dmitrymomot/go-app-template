@@ -1,0 +1,91 @@
+package auth
+
+import "github.com/dmitrymomot/go-app-template/web/templates/views"
+import "net/url"
+
+templ SignupPage() {
+	@views.Layout(views.Head{
+		Title:       "Sign Up",
+		Description: "Create an account to access the app.",
+	}) {
+		<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+			<div class="sm:mx-auto sm:w-full sm:max-w-sm">
+				<img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company"/>
+				<h2 class="mt-10 text-center text-3xl font-bold leading-9 tracking-tight text-zinc-900 dark:text-zinc-100">
+					Sign up
+				</h2>
+				<p class="mt-2 text-center text-sm text-zinc-500 dark:text-zinc-400 max-w">
+					Already have an account?
+					<a href="/auth/login" class="font-semibold leading-6 text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300">Login</a>
+				</p>
+			</div>
+			<div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+				@SignupForm(SignupFormPayload{})
+				@GoogleAuth()
+				<p class="mt-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
+					By signing up, you agree to our
+					<a href="#" class="font-semibold leading-6 text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300">Terms of user</a>
+					and
+					<a href="#" class="font-semibold leading-6 text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300">Privacy Policy</a>
+				</p>
+			</div>
+		</div>
+	}
+}
+
+type SignupFormPayload struct {
+	Form   url.Values
+	Errors url.Values
+}
+
+// Email value
+func (p SignupFormPayload) Email() string {
+	return p.Form.Get("email")
+}
+
+// Password value
+func (p SignupFormPayload) Password() string {
+	return p.Form.Get("password")
+}
+
+// Erros for email field
+func (p SignupFormPayload) EmailErrors() []string {
+	if p.Errors.Has("email") {
+		return p.Errors["email"]
+	}
+	return nil
+}
+
+// Erros for password field
+func (p SignupFormPayload) PasswordErrors() []string {
+	if p.Errors.Has("password") {
+		return p.Errors["password"]
+	}
+	return nil
+}
+
+templ SignupForm(data SignupFormPayload) {
+	@Form("/auth/signup") {
+		@InputField(Input{
+			Name:         "email",
+			Type:         "email",
+			Label:        "Email address",
+			Required:     true,
+			Autocomplete: "email",
+			Value:        data.Email(),
+			Errors:       data.EmailErrors(),
+		})
+		@InputField(Input{
+			Name:         "password",
+			Type:         "password",
+			Label:        "Password",
+			Required:     true,
+			Autocomplete: "new-password",
+			ActionURL:    "/auth/forgot-password",
+			ActionLabel:  "Forgot password?",
+			Value:        data.Password(),
+			Errors:       data.PasswordErrors(),
+		})
+		@PrimaryButton("Create account")
+	}
+}

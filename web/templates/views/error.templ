@@ -10,14 +10,14 @@ templ ErrorPage(code int, message string) {
 		Title:       fmt.Sprintf("%d %s", code, http.StatusText(code)),
 		Description: message,
 	}) {
-		<main class="grid min-h-full place-items-center px-6 py-24 sm:pt-32 lg:pt-56 lg:px-8">
+		<main class="grid min-h-full place-items-center px-6 py-24 sm:py-32 lg:px-8">
 			<div class="text-center">
 				<p class="text-base font-semibold text-indigo-600 dark:text-indigo-400">{ fmt.Sprintf("%d", code) }</p>
-				<h1 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl">{ http.StatusText(code) }</h1>
-				<p class="mt-6 text-base leading-7 text-gray-600 dark:text-gray-400">{ message }</p>
+				<h1 class="mt-4 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-5xl">{ http.StatusText(code) }</h1>
+				<p class="mt-6 text-base leading-7 text-zinc-600 dark:text-zinc-400">{ message }</p>
 				<div class="mt-10 flex items-center justify-center gap-x-6">
 					<a href="/" class="rounded-md bg-indigo-600 dark:bg-indigo-400 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-400">Go back home</a>
-					<a href="#" class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+					<a href="#" class="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
 						Contact support <span aria-hidden="true">&rarr;</span>
 					</a>
 				</div>

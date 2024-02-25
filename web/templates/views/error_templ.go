@@ -35,46 +35,46 @@ func ErrorPage(code int, message string) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"grid min-h-full place-items-center px-6 py-24 sm:pt-32 lg:pt-56 lg:px-8\"><div class=\"text-center\"><p class=\"text-base font-semibold text-indigo-600 dark:text-indigo-400\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"grid min-h-full place-items-center px-6 py-24 sm:py-32 lg:px-8\"><div class=\"text-center\"><p class=\"text-base font-semibold text-indigo-600 dark:text-indigo-400\">")
 			if templ_7745c5c3_Err != nil {
 				return errtrace.Wrap(templ_7745c5c3_Err)
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", code))
 			if templ_7745c5c3_Err != nil {
-				return errtrace.Wrap(templ.Error{Err: templ_7745c5c3_Err, FileName: `web/views/error.templ`, Line: 14, Col: 101})
+				return errtrace.Wrap(templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/views/error.templ`, Line: 14, Col: 101})
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return errtrace.Wrap(templ_7745c5c3_Err)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><h1 class=\"mt-4 text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-5xl\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><h1 class=\"mt-4 text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-5xl\">")
 			if templ_7745c5c3_Err != nil {
 				return errtrace.Wrap(templ_7745c5c3_Err)
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(http.StatusText(code))
 			if templ_7745c5c3_Err != nil {
-				return errtrace.Wrap(templ.Error{Err: templ_7745c5c3_Err, FileName: `web/views/error.templ`, Line: 15, Col: 123})
+				return errtrace.Wrap(templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/views/error.templ`, Line: 15, Col: 123})
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return errtrace.Wrap(templ_7745c5c3_Err)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><p class=\"mt-6 text-base leading-7 text-gray-600 dark:text-gray-400\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><p class=\"mt-6 text-base leading-7 text-zinc-600 dark:text-zinc-400\">")
 			if templ_7745c5c3_Err != nil {
 				return errtrace.Wrap(templ_7745c5c3_Err)
 			}
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(message)
 			if templ_7745c5c3_Err != nil {
-				return errtrace.Wrap(templ.Error{Err: templ_7745c5c3_Err, FileName: `web/views/error.templ`, Line: 16, Col: 82})
+				return errtrace.Wrap(templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/views/error.templ`, Line: 16, Col: 82})
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return errtrace.Wrap(templ_7745c5c3_Err)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><div class=\"mt-10 flex items-center justify-center gap-x-6\"><a href=\"/\" class=\"rounded-md bg-indigo-600 dark:bg-indigo-400 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-400\">Go back home</a> <a href=\"#\" class=\"text-sm font-semibold text-gray-900 dark:text-gray-100\">Contact support <span aria-hidden=\"true\">&rarr;</span></a></div></div></main>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><div class=\"mt-10 flex items-center justify-center gap-x-6\"><a href=\"/\" class=\"rounded-md bg-indigo-600 dark:bg-indigo-400 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-400\">Go back home</a> <a href=\"#\" class=\"text-sm font-semibold text-zinc-900 dark:text-zinc-100\">Contact support <span aria-hidden=\"true\">&rarr;</span></a></div></div></main>")
 			if templ_7745c5c3_Err != nil {
 				return errtrace.Wrap(templ_7745c5c3_Err)
 			}

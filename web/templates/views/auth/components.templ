@@ -1,0 +1,93 @@
+package auth
+
+type InputType string
+
+// String returns the string representation of the InputType
+func (i InputType) String() string {
+	return string(i)
+}
+
+const (
+	Text     InputType = "text"
+	Email    InputType = "email"
+	Password InputType = "password"
+	Hidden   InputType = "hidden"
+)
+
+type Input struct {
+	Type         InputType
+	ID           string
+	Name         string
+	Label        string
+	Placeholder  string
+	Autocomplete string
+	Required     bool
+	ActionURL    string
+	ActionLabel  string
+	Value        string
+	Errors       []string
+}
+
+// GetInputID returns the ID of the input
+func (c Input) GetInputID() string {
+	if c.ID != "" {
+		return c.ID
+	}
+	return c.Name
+}
+
+// GetInputType returns the type of the input
+func (c Input) GetInputType() string {
+	if c.Type == "" {
+		return Text.String()
+	}
+	return c.Type.String()
+}
+
+// GetActionURL returns the action URL of the input
+func (c Input) GetActionURL() templ.SafeURL {
+	if c.ActionURL != "" {
+		return templ.URL(c.ActionURL)
+	}
+	return "#"
+}
+
+templ InputField(c Input) {
+	if c.Type == Hidden {
+		<input id={ c.GetInputID() } name={ c.Name } type={ c.GetInputType() } value={ c.Value } class="hidden"/>
+	} else {
+		<div>
+			<div class="flex items-center justify-between">
+				<label for={ c.GetInputID() } class="block text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-100">{ c.Label }</label>
+				if c.ActionLabel != "" {
+					<div class="text-sm">
+						<a href={ c.GetActionURL() } class="font-semibold text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">{ c.ActionLabel }</a>
+					</div>
+				}
+			</div>
+			<div class="mt-2">
+				<input id={ c.GetInputID() } name={ c.Name } type={ c.GetInputType() } autocomplete={ c.Autocomplete } required?={ c.Required } value={ c.Value } class="block w-full rounded-md border-0 py-1.5 text-zinc-900 dark:text-zinc-100 shadow-sm dark:shadow-zinc-950 ring-1 ring-inset ring-zinc-300 dark:ring-zinc-600 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-300 sm:text-sm sm:leading-6 dark:bg-zinc-800"/>
+			</div>
+			if len(c.Errors) > 0 {
+				for _, err := range c.Errors {
+					<p class="mt-2 text-sm text-red-600 dark:text-red-500" id={ c.Name + "-error" }>{ err }</p>
+				}
+			}
+		</div>
+	}
+}
+
+templ PrimaryButton(label string) {
+	<div>
+		<button type="submit" id="submit-btn" class="flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm dark:shadow-zinc-950 hover:bg-indigo-500 dark:hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-500 cursor-pointer">
+			<span class="default-label">{ label }</span>
+			<span class="loading-label hidden">Sending...</span>
+		</button>
+	</div>
+}
+
+templ Form(action string) {
+	<form class="space-y-6" hx-post={ action } hx-swap="innerHTML" hx-indicator="#submit-btn">
+		{ children... }
+	</form>
+}

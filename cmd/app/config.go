@@ -33,6 +33,7 @@ var (
 	dbMaxIdleConns = env.GetInt("DATABASE_IDLE_CONNS", 2)
 
 	// HTTP
+	httpHost            = env.GetString("HTTP_HOST", "")
 	httpPort            = env.GetInt("HTTP_PORT", 8080)
 	serverHeader        = env.GetString("SERVER_HEADER", appName+"/"+buildTag)
 	httpRequestTimeout  = env.GetDuration("HTTP_REQUEST_TIMEOUT", 5*time.Second)
@@ -53,7 +54,7 @@ var (
 	corsMaxAge             = env.GetInt("CORS_MAX_AGE", 300)
 
 	// CSRF
-	csrfSecret = env.GetBytes("CSRF_SECRET", []byte("32-byte-long-auth-key"))
+	// csrfSecret = env.GetBytes("CSRF_SECRET", []byte("32-byte-long-auth-key"))
 
 	// Static
 	staticDir       = env.GetString("STATIC_DIR", "./web/static")   // Must be a relative path

@@ -16,13 +16,13 @@ templ Layout(h Head) {
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
 			<script src="/static/darkmode.js"></script>
 			<link rel="stylesheet" href="/static/app.css"/>
-			<link rel="stylesheet" href="https://rsms.me/inter/inter.css"/>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet"/>
 			<script src="/static/htmx.min.js"></script>
 		</head>
-		<body class="h-full bg-white dark:bg-gray-900">
-			<div class="min-h-full">
-				{ children... }
-			</div>
+		<body class="h-full bg-white dark:bg-zinc-900">
+			{ children... }
 		</body>
 	</html>
 }

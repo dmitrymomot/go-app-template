@@ -10,7 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+        sans: ['Nunito', 'Inter var', ...defaultTheme.fontFamily.sans],
       },
     },
   },

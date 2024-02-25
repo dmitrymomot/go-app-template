@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 	stdLog "log"
-	"net/http"
 	"time"
 
 	"braces.dev/errtrace"
 	"github.com/dmitrymomot/asyncer"
 	libsql_remote "github.com/dmitrymomot/go-app-template/db/libsql/remote"
+	"github.com/dmitrymomot/go-app-template/db/repository"
+	"github.com/dmitrymomot/go-app-template/internal/auth"
 	"github.com/dmitrymomot/httpserver"
 	"github.com/dmitrymomot/mailer"
 	"github.com/dmitrymomot/mailer/adapters/postmark"
@@ -71,21 +72,20 @@ func main() {
 	mailEnqueuer := mailer.NewEnqueuer(enqueuer)
 	_ = mailEnqueuer // TODO: remove this line and use the mailEnqueuer to send emails via the queue.
 
+	// Init DB repository
+	repo := repository.New(db)
+
 	// Init router
 	r := initRouter(logger, redisClient)
 
-	// TODO: remove this route and add your own instead.
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html")
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Hello, World!"))
-	})
+	// Mount the auth service handler to the router.
+	r.Mount("/auth", auth.NewHTTPHandler(auth.NewService(repo)))
 
 	eg, ctx := errgroup.WithContext(ctx)
 
 	// Run server
 	eg.Go(func() error {
-		server := httpserver.New(fmt.Sprintf(":%d", httpPort), r,
+		server := httpserver.New(fmt.Sprintf("%s:%d", httpHost, httpPort), r,
 			httpserver.WithReadTimeout(httpReadTimeout),
 			httpserver.WithWriteTimeout(httpWriteTimeout),
 			httpserver.WithGracefulShutdown(10*time.Second),

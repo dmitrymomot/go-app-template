@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.htmx-request .default-label {
+  display: none;
+}
+
+.htmx-request .loading-label {
+  display: inline;
+}
+
+#submit-btn.htmx-request {
+  @apply cursor-progress pointer-events-none;
+}

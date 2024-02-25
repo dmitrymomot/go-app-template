@@ -5,16 +5,23 @@ tmp_dir = "tmp"
 bin = "./tmp/app"
 pre_cmd = ["task view"]
 cmd = "task build:air"
-delay = 1000
+delay = 5000
 exclude_dir = ["assets", "tmp", "vendor"]
 exclude_file = []
-exclude_regex = [".*_templ.go"]
-exclude_unchanged = false
-follow_symlink = false
+exclude_regex = [
+	".*_templ.go",
+	".*_test.go",
+	".*_gen.go",
+	"*.md",
+	"*.log",
+	"*.sql",
+]
+exclude_unchanged = true
+follow_symlink = true
 full_bin = ""
-include_dir = ["web/templates/views", "web/src"]
-include_ext = ["templ", "css"]
-kill_delay = "0s"
+include_dir = ["web/templates/views", "web/src", "internal", "cmd/app"]
+include_ext = ["templ", "css", "go"]
+kill_delay = "2s"
 log = "build-errors.log"
 send_interrupt = true
 stop_on_error = true

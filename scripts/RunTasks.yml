@@ -23,7 +23,7 @@ tasks:
     cmds:
       - go clean -cache
       - errtrace -w ./...
-      - echo "Running the application on http://localhost:{{.HTTP_PORT}}"
+      - echo "Running the application on http://{{.HTTP_HOST}}:{{.HTTP_PORT}}"
       - go run ./cmd/app/
 
   run:

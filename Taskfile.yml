@@ -64,4 +64,5 @@ tasks:
       - task: errtrace
     cmds:
       - task: db:migrate
+      - open -g http://{{.HTTP_HOST}}:{{.HTTP_PORT}}
       - air -c ./scripts/.air.toml

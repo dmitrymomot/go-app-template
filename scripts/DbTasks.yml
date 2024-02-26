@@ -32,6 +32,8 @@ tasks:
       - command -v docker-compose
       - test -f deployments/redis.yml
     cmds:
+      - open -g -a Docker
+      - sleep 5
       - docker-compose -f deployments/redis.yml up -d
 
   sqlc:

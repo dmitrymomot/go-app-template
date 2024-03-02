@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/alexedwards/scs/goredisstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/dmitrymomot/clientip"
 	"github.com/dmitrymomot/go-app-template/cmd/app/handlers"
@@ -22,7 +21,7 @@ import (
 // It sets up the middleware stack, handles CORS, disables caching in debug mode,
 // and registers default error handlers. It also handles serving static files
 // from the './web/static' subdirectory.
-func initRouter(log *zap.SugaredLogger, redisClient *redis.Client) *chi.Mux {
+func initRouter(log *zap.SugaredLogger, redisClient *redis.Client, sessionManager *scs.SessionManager) *chi.Mux {
 	r := chi.NewRouter()
 
 	// Middleware stack
@@ -84,14 +83,6 @@ func initRouter(log *zap.SugaredLogger, redisClient *redis.Client) *chi.Mux {
 	}
 
 	// Initialize a new session manager and configure the session lifetime.
-	sessionManager := scs.New()
-	sessionManager.Lifetime = sessionTTL
-	sessionManager.Cookie.Name = sessionName
-	sessionManager.Cookie.Secure = appEnv == EnvProduction
-	sessionManager.Cookie.Persist = true
-	sessionManager.Cookie.SameSite = http.SameSiteLaxMode
-	sessionManager.Cookie.HttpOnly = true
-	sessionManager.Store = goredisstore.NewWithPrefix(redisClient, sessionPrefix)
 	r.Use(sessionManager.LoadAndSave)
 
 	// Default error handlers

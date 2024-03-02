@@ -91,3 +91,96 @@ templ Form(action string) {
 		{ children... }
 	</form>
 }
+
+type PopupType string
+
+// String returns the string representation of the PopupType
+func (p PopupType) String() string {
+	return string(p)
+}
+
+const (
+	PopupSuccess PopupType = "success"
+	PopupError   PopupType = "error"
+	PopupWarning PopupType = "warning"
+	PopupInfo    PopupType = "info"
+)
+
+type PopupPayload struct {
+	Type        PopupType
+	Title       string
+	Message     string
+	ActionURL   string
+	ActionLabel string
+}
+
+templ PopupNotification(p PopupPayload) {
+	<div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+		<div class="fixed inset-0 bg-zinc-500 dark:bg-zinc-700 bg-opacity-75 dark:bg-opacity-50 transition-opacity"></div>
+		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+			<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+				<div class="relative transform overflow-hidden rounded-lg bg-white dark:bg-zinc-900 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+					<div>
+						switch p.Type {
+							case PopupSuccess:
+								@PopupIconSuccess()
+							case PopupError:
+								@PopupIconError()
+							case PopupWarning:
+								@PopupIconWarning()
+							case PopupInfo:
+								@PopupIconInfo()
+							default:
+								@PopupIconInfo()
+						}
+						<div class="mt-3 text-center sm:mt-5">
+							<h3 class="text-2xl font-semibold leading-6 text-zinc-900 dark:text-zinc-100" id="modal-title">{ p.Title }</h3>
+							<div class="mt-2">
+								<p class="text-sm text-zinc-500 dark:text-zinc-400">{ p.Message }</p>
+							</div>
+						</div>
+					</div>
+					if p.ActionLabel != "" && p.ActionURL != "" {
+						<div class="mt-5 sm:mt-6">
+							<a href={ templ.URL(p.ActionURL) } class="flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm dark:shadow-zinc-950 hover:bg-indigo-500 dark:hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-500 cursor-pointer">
+								{ p.ActionLabel }
+							</a>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ PopupIconSuccess() {
+	<div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-500">
+		<svg class="h-6 w-6 text-green-600 dark:text-green-900" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+		</svg>
+	</div>
+}
+
+templ PopupIconError() {
+	<div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-500">
+		<svg class="h-6 w-6 text-red-600 dark:text-red-900" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+		</svg>
+	</div>
+}
+
+templ PopupIconWarning() {
+	<div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-500">
+		<svg class="h-6 w-6 text-yellow-600 dark:text-yellow-900" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4v.01"></path>
+		</svg>
+	</div>
+}
+
+templ PopupIconInfo() {
+	<div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-500">
+		<svg class="h-6 w-6 text-blue-600 dark:text-blue-900" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4v.01"></path>
+		</svg>
+	</div>
+}

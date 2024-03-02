@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	stdLog "log"
+	"net/http"
 	"time"
 
 	"braces.dev/errtrace"
@@ -76,26 +77,27 @@ func main() {
 	// Init DB repository
 	repo := repository.New(db)
 
+	// Init session manager
+	sessionManager := initSessionManager(redisClient)
+
 	// Init router
-	r := initRouter(logger, redisClient)
+	r := initRouter(logger, redisClient, sessionManager)
+
+	// Home page
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/auth/login", http.StatusTemporaryRedirect)
+	})
 
 	// Mount the auth service handler to the router.
 	r.Mount("/auth", handlers.NewHTTPHandler(
-		auth.NewService(repo),
 		logger.With("component", "auth"),
+		initGoogleOauth2Config(),
+		auth.NewEmailService(repo),
+		auth.NewGoogleService(repo),
+		sessionManager,
 	))
 
 	eg, ctx := errgroup.WithContext(ctx)
-
-	// Run server
-	eg.Go(func() error {
-		server := httpserver.New(fmt.Sprintf("%s:%d", httpHost, httpPort), r,
-			httpserver.WithReadTimeout(httpReadTimeout),
-			httpserver.WithWriteTimeout(httpWriteTimeout),
-			httpserver.WithGracefulShutdown(10*time.Second),
-		)
-		return errtrace.Wrap(server.Start(ctx))
-	})
 
 	// Run a new queue server with redis as the broker.
 	eg.Go(asyncer.RunQueueServer(
@@ -113,6 +115,16 @@ func main() {
 		// asyncer.NewTaskScheduler("@every 1s", TestTaskName),
 		// ... add more scheduled tasks here ...
 	))
+
+	// Run server
+	eg.Go(func() error {
+		server := httpserver.New(fmt.Sprintf("%s:%d", httpHost, httpPort), r,
+			httpserver.WithReadTimeout(httpReadTimeout),
+			httpserver.WithWriteTimeout(httpWriteTimeout),
+			httpserver.WithGracefulShutdown(10*time.Second),
+		)
+		return errtrace.Wrap(server.Start(ctx))
+	})
 
 	// Wait for all goroutines to finish
 	if err := eg.Wait(); err != nil {

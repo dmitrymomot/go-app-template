@@ -69,6 +69,14 @@ type ForgotPasswordFormPayload struct {
 	Errors url.Values
 }
 
+// General errors
+func (p ForgotPasswordFormPayload) GeneralErrors() []string {
+	if p.Errors.Has("general") {
+		return p.Errors["general"]
+	}
+	return nil
+}
+
 // Email value
 func (p ForgotPasswordFormPayload) Email() string {
 	return p.Form.Get("email")

@@ -81,8 +81,6 @@ templ SignupForm(data SignupFormPayload) {
 			Label:        "Password",
 			Required:     true,
 			Autocomplete: "new-password",
-			ActionURL:    "/auth/forgot-password",
-			ActionLabel:  "Forgot password?",
 			Value:        data.Password(),
 			Errors:       data.PasswordErrors(),
 		})

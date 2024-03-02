@@ -79,4 +79,10 @@ var (
 	// Email
 	emailFrom    = env.GetString("EMAIL_FROM", "notifications@localhost")
 	emailReplyTo = env.GetString("EMAIL_REPLY_TO", "no-reply@localhost")
+
+	// Google OAuth2
+	googleOauth2ClientID     = env.MustString("GOOGLE_OAUTH2_CLIENT_ID")
+	googleOauth2ClientSecret = env.MustString("GOOGLE_OAUTH2_CLIENT_SECRET")
+	googleOauth2CallbackURL  = env.MustString("GOOGLE_OAUTH2_CALLBACK_URL")
+	googleOauth2Scopes       = env.GetStrings("GOOGLE_OAUTH2_SCOPES", ",", []string{"https://www.googleapis.com/auth/userinfo.email", "openid"})
 )

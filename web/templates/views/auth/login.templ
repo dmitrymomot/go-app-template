@@ -36,6 +36,14 @@ type LoginFormPayload struct {
 	Errors url.Values
 }
 
+// General errors
+func (p LoginFormPayload) GeneralErrors() []string {
+	if p.Errors.Has("general") {
+		return p.Errors["general"]
+	}
+	return nil
+}
+
 // Email value
 func (p LoginFormPayload) Email() string {
 	return p.Form.Get("email")

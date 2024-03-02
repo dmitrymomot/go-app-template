@@ -69,6 +69,14 @@ type ResetPasswordFormPayload struct {
 	Errors url.Values
 }
 
+// General errors
+func (p ResetPasswordFormPayload) GeneralErrors() []string {
+	if p.Errors.Has("general") {
+		return p.Errors["general"]
+	}
+	return nil
+}
+
 // Password value
 func (p ResetPasswordFormPayload) Password() string {
 	return p.Form.Get("password")

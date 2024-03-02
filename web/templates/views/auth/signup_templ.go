@@ -140,8 +140,6 @@ func SignupForm(data SignupFormPayload) templ.Component {
 				Label:        "Password",
 				Required:     true,
 				Autocomplete: "new-password",
-				ActionURL:    "/auth/forgot-password",
-				ActionLabel:  "Forgot password?",
 				Value:        data.Password(),
 				Errors:       data.PasswordErrors(),
 			}).Render(ctx, templ_7745c5c3_Buffer)

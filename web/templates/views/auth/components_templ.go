@@ -338,3 +338,234 @@ func Form(action string) templ.Component {
 		return errtrace.Wrap(templ_7745c5c3_Err)
 	})
 }
+
+type PopupType string
+
+// String returns the string representation of the PopupType
+func (p PopupType) String() string {
+	return string(p)
+}
+
+const (
+	PopupSuccess PopupType = "success"
+	PopupError   PopupType = "error"
+	PopupWarning PopupType = "warning"
+	PopupInfo    PopupType = "info"
+)
+
+type PopupPayload struct {
+	Type        PopupType
+	Title       string
+	Message     string
+	ActionURL   string
+	ActionLabel string
+}
+
+func PopupNotification(p PopupPayload) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"relative z-10\" aria-labelledby=\"modal-title\" role=\"dialog\" aria-modal=\"true\"><div class=\"fixed inset-0 bg-zinc-500 dark:bg-zinc-700 bg-opacity-75 dark:bg-opacity-50 transition-opacity\"></div><div class=\"fixed inset-0 z-10 w-screen overflow-y-auto\"><div class=\"flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0\"><div class=\"relative transform overflow-hidden rounded-lg bg-white dark:bg-zinc-900 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6\"><div>")
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ_7745c5c3_Err)
+		}
+		switch p.Type {
+		case PopupSuccess:
+			templ_7745c5c3_Err = PopupIconSuccess().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return errtrace.Wrap(templ_7745c5c3_Err)
+			}
+		case PopupError:
+			templ_7745c5c3_Err = PopupIconError().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return errtrace.Wrap(templ_7745c5c3_Err)
+			}
+		case PopupWarning:
+			templ_7745c5c3_Err = PopupIconWarning().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return errtrace.Wrap(templ_7745c5c3_Err)
+			}
+		case PopupInfo:
+			templ_7745c5c3_Err = PopupIconInfo().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return errtrace.Wrap(templ_7745c5c3_Err)
+			}
+		default:
+			templ_7745c5c3_Err = PopupIconInfo().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return errtrace.Wrap(templ_7745c5c3_Err)
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-3 text-center sm:mt-5\"><h3 class=\"text-2xl font-semibold leading-6 text-zinc-900 dark:text-zinc-100\" id=\"modal-title\">")
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ_7745c5c3_Err)
+		}
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(p.Title)
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/views/auth/components.templ`, Line: 136, Col: 111})
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ_7745c5c3_Err)
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h3><div class=\"mt-2\"><p class=\"text-sm text-zinc-500 dark:text-zinc-400\">")
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ_7745c5c3_Err)
+		}
+		var templ_7745c5c3_Var11 string
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(p.Message)
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/views/auth/components.templ`, Line: 138, Col: 71})
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ_7745c5c3_Err)
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ_7745c5c3_Err)
+		}
+		if p.ActionLabel != "" && p.ActionURL != "" {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mt-5 sm:mt-6\"><a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return errtrace.Wrap(templ_7745c5c3_Err)
+			}
+			var templ_7745c5c3_Var12 templ.SafeURL = templ.URL(p.ActionURL)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var12)))
+			if templ_7745c5c3_Err != nil {
+				return errtrace.Wrap(templ_7745c5c3_Err)
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm dark:shadow-zinc-950 hover:bg-indigo-500 dark:hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-500 cursor-pointer\">")
+			if templ_7745c5c3_Err != nil {
+				return errtrace.Wrap(templ_7745c5c3_Err)
+			}
+			var templ_7745c5c3_Var13 string
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(p.ActionLabel)
+			if templ_7745c5c3_Err != nil {
+				return errtrace.Wrap(templ.Error{Err: templ_7745c5c3_Err, FileName: `web/templates/views/auth/components.templ`, Line: 145, Col: 23})
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+			if templ_7745c5c3_Err != nil {
+				return errtrace.Wrap(templ_7745c5c3_Err)
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div>")
+			if templ_7745c5c3_Err != nil {
+				return errtrace.Wrap(templ_7745c5c3_Err)
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ_7745c5c3_Err)
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return errtrace.Wrap(templ_7745c5c3_Err)
+	})
+}
+
+func PopupIconSuccess() templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var14 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var14 == nil {
+			templ_7745c5c3_Var14 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-500\"><svg class=\"h-6 w-6 text-green-600 dark:text-green-900\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"></path></svg></div>")
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ_7745c5c3_Err)
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return errtrace.Wrap(templ_7745c5c3_Err)
+	})
+}
+
+func PopupIconError() templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-500\"><svg class=\"h-6 w-6 text-red-600 dark:text-red-900\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></div>")
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ_7745c5c3_Err)
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return errtrace.Wrap(templ_7745c5c3_Err)
+	})
+}
+
+func PopupIconWarning() templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var16 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var16 == nil {
+			templ_7745c5c3_Var16 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-500\"><svg class=\"h-6 w-6 text-yellow-600 dark:text-yellow-900\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 8v4m0 4v.01\"></path></svg></div>")
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ_7745c5c3_Err)
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return errtrace.Wrap(templ_7745c5c3_Err)
+	})
+}
+
+func PopupIconInfo() templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var17 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var17 == nil {
+			templ_7745c5c3_Var17 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-500\"><svg class=\"h-6 w-6 text-blue-600 dark:text-blue-900\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"1.5\" stroke=\"currentColor\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M12 8v4m0 4v.01\"></path></svg></div>")
+		if templ_7745c5c3_Err != nil {
+			return errtrace.Wrap(templ_7745c5c3_Err)
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return errtrace.Wrap(templ_7745c5c3_Err)
+	})
+}

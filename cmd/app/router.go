@@ -1,17 +1,14 @@
 package main
 
 import (
-	"encoding/json"
-	"errors"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/alexedwards/scs/goredisstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/dmitrymomot/clientip"
+	"github.com/dmitrymomot/go-app-template/cmd/app/handlers"
 	"github.com/dmitrymomot/go-app-template/pkg/logger"
-	"github.com/dmitrymomot/go-app-template/web/templates/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -98,8 +95,8 @@ func initRouter(log *zap.SugaredLogger, redisClient *redis.Client) *chi.Mux {
 	r.Use(sessionManager.LoadAndSave)
 
 	// Default error handlers
-	r.NotFound(notFoundHandler())
-	r.MethodNotAllowed(methodNotAllowedHandler())
+	r.NotFound(handlers.NotFoundHandler())
+	r.MethodNotAllowed(handlers.MethodNotAllowedHandler())
 
 	if appDebugMode {
 		// Profiler endpoints, only for debug mode
@@ -114,74 +111,4 @@ func initRouter(log *zap.SugaredLogger, redisClient *redis.Client) *chi.Mux {
 	}
 
 	return r
-}
-
-// notFoundHandler is a handler for 404 Not Found
-func notFoundHandler() func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		err := errors.New("Page not found")
-		if isJsonRequest(r) {
-			err = errors.New("Endpoint not found")
-		}
-		sendErrorResponse(
-			w, r,
-			http.StatusNotFound,
-			err,
-		)
-	}
-}
-
-// methodNotAllowedHandler is a handler for 405 Method Not Allowed
-func methodNotAllowedHandler() func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		sendErrorResponse(
-			w, r,
-			http.StatusMethodNotAllowed,
-			errors.New(http.StatusText(http.StatusMethodNotAllowed)),
-		)
-	}
-}
-
-// Predefined http encoder content type
-const (
-	contentTypeHeader  = "Content-Type"
-	contextTypeCharset = "charset=utf-8"
-	contentTypeJSON    = "application/json"
-	contentTypeHTML    = "text/html"
-	contentTypeJSONUTF = contentTypeJSON + "; " + contextTypeCharset
-	contentTypeHTMLUTF = contentTypeHTML + "; " + contextTypeCharset
-)
-
-// Helper function to check if an error code is valid
-func isValidErrorCode(errCode int) bool {
-	return errCode >= 400 && errCode < 600
-}
-
-// Is request a json request?
-func isJsonRequest(r *http.Request) bool {
-	return strings.Contains(strings.ToLower(r.Header.Get(contentTypeHeader)), contentTypeJSON)
-}
-
-// Helper function to send an error response
-func sendErrorResponse(w http.ResponseWriter, r *http.Request, statusCode int, err error) {
-	if !isValidErrorCode(statusCode) {
-		statusCode = http.StatusInternalServerError
-	}
-
-	if isJsonRequest(r) {
-		w.Header().Set(contentTypeHeader, contentTypeJSONUTF)
-		w.WriteHeader(statusCode)
-		if err := json.NewEncoder(w).Encode(map[string]interface{}{
-			"error": err.Error(),
-		}); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		return
-	}
-
-	w.Header().Set(contentTypeHeader, contentTypeHTMLUTF)
-	w.WriteHeader(statusCode)
-	if err := views.ErrorPage(statusCode, err.Error()).Render(r.Context(), w); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 }

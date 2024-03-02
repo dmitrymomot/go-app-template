@@ -8,6 +8,7 @@ import (
 
 	"braces.dev/errtrace"
 	"github.com/dmitrymomot/asyncer"
+	"github.com/dmitrymomot/go-app-template/cmd/app/handlers"
 	libsql_remote "github.com/dmitrymomot/go-app-template/db/libsql/remote"
 	"github.com/dmitrymomot/go-app-template/db/repository"
 	"github.com/dmitrymomot/go-app-template/internal/auth"
@@ -79,7 +80,10 @@ func main() {
 	r := initRouter(logger, redisClient)
 
 	// Mount the auth service handler to the router.
-	r.Mount("/auth", auth.NewHTTPHandler(auth.NewService(repo)))
+	r.Mount("/auth", handlers.NewHTTPHandler(
+		auth.NewService(repo),
+		logger.With("component", "auth"),
+	))
 
 	eg, ctx := errgroup.WithContext(ctx)
 

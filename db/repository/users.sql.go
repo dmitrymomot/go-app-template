@@ -132,7 +132,7 @@ func (q *Queries) GetUsersCount(ctx context.Context) (int64, error) {
 }
 
 const updateUserEmail = `-- name: UpdateUserEmail :exec
-UPDATE users SET email = ?1 WHERE id = ?2
+UPDATE users SET email = ?1, verified_at = NULL WHERE id = ?2
 `
 
 type UpdateUserEmailParams struct {
@@ -158,5 +158,20 @@ type UpdateUserPasswordParams struct {
 // UpdateUserPassword: Update a user's password
 func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
 	_, err := q.db.ExecContext(ctx, updateUserPassword, arg.Password, arg.ID)
+	return errtrace.Wrap(err)
+}
+
+const verifyUser = `-- name: VerifyUser :exec
+UPDATE users SET verified_at = ?1 WHERE id = ?2
+`
+
+type VerifyUserParams struct {
+	VerifiedAt sql.NullTime
+	ID         string
+}
+
+// VerifyUser: Verify a user's email
+func (q *Queries) VerifyUser(ctx context.Context, arg VerifyUserParams) error {
+	_, err := q.db.ExecContext(ctx, verifyUser, arg.VerifiedAt, arg.ID)
 	return errtrace.Wrap(err)
 }

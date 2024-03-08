@@ -69,6 +69,8 @@ type Querier interface {
 	UpdateUserEmail(ctx context.Context, arg UpdateUserEmailParams) error
 	// UpdateUserPassword: Update a user's password
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
+	// VerifyUser: Verify a user's email
+	VerifyUser(ctx context.Context, arg VerifyUserParams) error
 }
 
 var _ Querier = (*Queries)(nil)

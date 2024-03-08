@@ -16,7 +16,11 @@ UPDATE users SET password = @password WHERE id = @id;
 
 -- name: UpdateUserEmail :exec
 -- UpdateUserEmail: Update a user's email
-UPDATE users SET email = @email WHERE id = @id;
+UPDATE users SET email = @email, verified_at = NULL WHERE id = @id;
+
+-- name: VerifyUser :exec
+-- VerifyUser: Verify a user's email
+UPDATE users SET verified_at = @verified_at WHERE id = @id;
 
 -- name: DeleteUser :exec
 -- DeleteUser: Delete a user from the database

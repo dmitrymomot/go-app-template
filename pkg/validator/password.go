@@ -29,9 +29,9 @@ func ValidatePassword(password string) error {
 	// This is not necessary because the password length is already validated
 	// by the minLen and maxLen tags in the validator package.
 	if len(password) < 8 {
-		return ErrPasswordTooShort
+		return errtrace.Wrap(ErrPasswordTooShort)
 	} else if len(password) > 64 {
-		return ErrPasswordTooLong
+		return errtrace.Wrap(ErrPasswordTooLong)
 	}
 
 	// Check if password contains at least one digit.

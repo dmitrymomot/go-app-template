@@ -6,6 +6,7 @@ import (
 	"strings"
 	"unicode"
 
+	"braces.dev/errtrace"
 	"golang.org/x/text/runes"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
@@ -17,7 +18,7 @@ func ToSlug(s string) (string, error) {
 	t := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
 	normalized, _, err := transform.String(t, s)
 	if err != nil {
-		return "", errors.Join(ErrFailedToNormalizeString, err)
+		return "", errtrace.Wrap(errors.Join(ErrFailedToNormalizeString, err))
 	}
 	lowercased := strings.ToLower(normalized)
 

@@ -32,36 +32,42 @@ func NewService(repo repository.Querier) *Service {
 // It sanitizes the email, checks if the email is already in use, prepares the user data,
 // and creates a new user in the repository.
 // The function returns the UUID of the created user and any error encountered during the process.
-func (s *Service) CreateUser(ctx context.Context, email, password string) (uuid.UUID, error) {
+func (s *Service) CreateUser(ctx context.Context, email, password string) (dto.User, error) {
 	// Sanitize the email
 	email, err := emailx.SanitizeEmail(email, true)
 	if err != nil {
-		return uuid.Nil, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, err))
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, err))
 	}
 
 	// Check if the email is already in use
 	if _, err := s.repo.GetUserByEmail(ctx, email); err == nil {
-		return uuid.Nil, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, ErrEmailAlreadyExists))
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, ErrEmailAlreadyExists))
 	}
 
 	// Prepare a new user data
 	uid := uuid.New()
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return uuid.Nil, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, err))
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, err))
 	}
 
 	// Create a new user
-	if err := s.repo.CreateUser(ctx, repository.CreateUserParams{
+	user, err := s.repo.CreateUser(ctx, repository.CreateUserParams{
 		ID:        uid.String(),
 		Email:     email,
 		Password:  sql.NullString{String: string(passwordHash), Valid: true},
 		CreatedAt: time.Now(),
-	}); err != nil {
-		return uuid.Nil, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, err))
+	})
+	if err != nil {
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, err))
 	}
 
-	return uid, nil
+	result, err := dto.CastFromRepositoryUser(user)
+	if err != nil {
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, err))
+	}
+
+	return result, nil
 }
 
 // GetUserByEmail returns a user with the specified email.
@@ -72,16 +78,12 @@ func (s *Service) GetUserByEmail(ctx context.Context, email string) (dto.User, e
 		return dto.User{}, errtrace.Wrap(errors.Join(ErrUserNotFound, err))
 	}
 
-	uid, err := uuid.Parse(user.ID)
+	result, err := dto.CastFromRepositoryUser(user)
 	if err != nil {
-		return dto.User{}, errtrace.Wrap(errors.Join(ErrUserNotFound, err))
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToRetrieveUser, err))
 	}
 
-	return dto.User{
-		ID:        uid,
-		Email:     user.Email,
-		CreatedAt: user.CreatedAt,
-	}, nil
+	return result, nil
 }
 
 // GetUserByID returns a user with the specified ID.
@@ -93,17 +95,12 @@ func (s *Service) GetUserByID(ctx context.Context, id uuid.UUID) (dto.User, erro
 		return dto.User{}, errtrace.Wrap(errors.Join(ErrUserNotFound, err))
 	}
 
-	// Parse the user ID
-	uid, err := uuid.Parse(user.ID)
+	result, err := dto.CastFromRepositoryUser(user)
 	if err != nil {
-		return dto.User{}, errtrace.Wrap(errors.Join(ErrUserNotFound, err))
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToRetrieveUser, err))
 	}
 
-	return dto.User{
-		ID:        uid,
-		Email:     user.Email,
-		CreatedAt: user.CreatedAt,
-	}, nil
+	return result, nil
 }
 
 // UpdateUserEmail updates a user email with the specified ID.
@@ -130,19 +127,25 @@ func (s *Service) UpdateUserEmail(ctx context.Context, id uuid.UUID, email strin
 // The function returns any error encountered during the process.
 func (s *Service) UpdateUserPassword(ctx context.Context, id uuid.UUID, currentPassword, newPassword string) error {
 	// Check the current password
-	if err := s.CheckPasswordByID(ctx, id, currentPassword); err != nil {
+	if _, err := s.CheckPasswordByID(ctx, id, currentPassword); err != nil {
 		return errtrace.Wrap(errors.Join(ErrFailedToUpdatePassword, err))
 	}
 
+	return s.ResetUserPassword(ctx, id, newPassword)
+}
+
+// ResetUserPassword resets a user password with the specified ID.
+// The function returns any error encountered during the process.
+func (s *Service) ResetUserPassword(ctx context.Context, id uuid.UUID, password string) error {
 	// Validate the new password
-	if err := validator.ValidatePassword(newPassword); err != nil {
-		return errtrace.Wrap(errors.Join(ErrFailedToUpdatePassword, err))
+	if err := validator.ValidatePassword(password); err != nil {
+		return errtrace.Wrap(errors.Join(ErrFailedToResetPassword, err))
 	}
 
 	// Prepare a new password hash
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return errtrace.Wrap(errors.Join(ErrFailedToUpdatePassword, err))
+		return errtrace.Wrap(errors.Join(ErrFailedToResetPassword, err))
 	}
 
 	// Update the user
@@ -150,7 +153,7 @@ func (s *Service) UpdateUserPassword(ctx context.Context, id uuid.UUID, currentP
 		ID:       id.String(),
 		Password: sql.NullString{String: string(passwordHash), Valid: true},
 	}); err != nil {
-		return errtrace.Wrap(errors.Join(ErrFailedToUpdatePassword, err))
+		return errtrace.Wrap(errors.Join(ErrFailedToResetPassword, err))
 	}
 
 	return nil
@@ -166,32 +169,58 @@ func (s *Service) DeleteUser(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-// CheckPasswordByID checks if the provided password matches the user's password.
+// SetVerificationStatus sets the verification status of a user with the specified ID.
 // The function returns any error encountered during the process.
-func (s *Service) CheckPasswordByID(ctx context.Context, id uuid.UUID, password string) error {
-	user, err := s.repo.GetUserByID(ctx, id.String())
-	if err != nil {
-		return errtrace.Wrap(errors.Join(ErrInvalidCredentials, err))
+func (s *Service) SetVerificationStatus(ctx context.Context, id uuid.UUID, verified bool) error {
+	verifiedAt := sql.NullTime{}
+	if verified {
+		verifiedAt = sql.NullTime{
+			Time:  time.Now(),
+			Valid: true,
+		}
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password.String), []byte(password)); err != nil {
-		return errtrace.Wrap(errors.Join(ErrInvalidCredentials, err))
+	if err := s.repo.VerifyUser(ctx, repository.VerifyUserParams{
+		ID:         id.String(),
+		VerifiedAt: verifiedAt,
+	}); err != nil {
+		return errtrace.Wrap(errors.Join(ErrFailedToVerifyEmail, err))
 	}
 
 	return nil
 }
 
+// CheckPasswordByID checks if the provided password matches the user's password.
+// The function returns any error encountered during the process.
+func (s *Service) CheckPasswordByID(ctx context.Context, id uuid.UUID, password string) (dto.User, error) {
+	user, err := s.repo.GetUserByID(ctx, id.String())
+	if err != nil {
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrInvalidCredentials, err))
+	}
+	return s.checkPassword(user, password)
+}
+
 // CheckPasswordByEmail checks if the provided password matches the user's password.
 // The function returns any error encountered during the process.
-func (s *Service) CheckPasswordByEmail(ctx context.Context, email, password string) error {
+func (s *Service) CheckPasswordByEmail(ctx context.Context, email, password string) (dto.User, error) {
 	user, err := s.repo.GetUserByEmail(ctx, email)
 	if err != nil {
-		return errtrace.Wrap(errors.Join(ErrInvalidCredentials, err))
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrInvalidCredentials, err))
 	}
+	return s.checkPassword(user, password)
+}
 
+// checkPassword checks if the provided password matches the user's password.
+// The function returns any error encountered during the process.
+func (s *Service) checkPassword(user repository.User, password string) (dto.User, error) {
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password.String), []byte(password)); err != nil {
-		return errtrace.Wrap(errors.Join(ErrInvalidCredentials, err))
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrInvalidCredentials, err))
 	}
 
-	return nil
+	result, err := dto.CastFromRepositoryUser(user)
+	if err != nil {
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToRetrieveUser, err))
+	}
+
+	return result, nil
 }

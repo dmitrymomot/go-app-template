@@ -79,3 +79,19 @@ tasks:
       - ./web/tailwind.config.js
     generates:
       - ./web/static/app.css
+
+  emails:
+    desc: Generate go views from email templ files.
+    silent: true
+    cmds:
+      - echo "Formatting templ files..."
+      - templ fmt web/templates/emails/
+      - echo "Generating go views from templ files..."
+      - templ generate web/templates/emails/
+      - echo "Adding errtrace to generated files..."
+      - errtrace -w ./...
+      - echo "Done."
+    sources:
+      - web/templates/emails/**/*.templ
+    generates:
+      - web/templates/emails/**/*.go

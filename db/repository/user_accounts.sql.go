@@ -68,7 +68,7 @@ func (q *Queries) GetAccountUsers(ctx context.Context, arg GetAccountUsersParams
 }
 
 const getUserAccounts = `-- name: GetUserAccounts :many
-SELECT accounts.id, accounts.name, accounts.title, accounts.logo_url, accounts.created_at, account_members.id, account_members.account_id, account_members.user_id, account_members.name, account_members.role, account_members.avatar_url, account_members.created_at
+SELECT accounts.id, accounts.name, accounts.slug, accounts.logo_url, accounts.created_at, account_members.id, account_members.account_id, account_members.user_id, account_members.name, account_members.role, account_members.avatar_url, account_members.created_at
 FROM account_members
 JOIN accounts ON accounts.id = account_members.account_id
 WHERE account_members.user_id = ?1
@@ -100,7 +100,7 @@ func (q *Queries) GetUserAccounts(ctx context.Context, arg GetUserAccountsParams
 		if err := rows.Scan(
 			&i.Account.ID,
 			&i.Account.Name,
-			&i.Account.Title,
+			&i.Account.Slug,
 			&i.Account.LogoUrl,
 			&i.Account.CreatedAt,
 			&i.AccountMember.ID,

@@ -11,8 +11,8 @@ import (
 
 type Account struct {
 	ID        string
-	Name      string
-	Title     sql.NullString
+	Name      sql.NullString
+	Slug      string
 	LogoUrl   sql.NullString
 	CreatedAt time.Time
 }

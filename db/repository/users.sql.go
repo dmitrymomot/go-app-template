@@ -12,8 +12,8 @@ import (
 	"time"
 )
 
-const createUser = `-- name: CreateUser :exec
-INSERT INTO users (id, email, password, created_at) VALUES (?1, ?2, ?3, ?4)
+const createUser = `-- name: CreateUser :one
+INSERT INTO users (id, email, password, created_at) VALUES (?1, ?2, ?3, ?4) RETURNING id, email, password, created_at, verified_at
 `
 
 type CreateUserParams struct {
@@ -24,14 +24,22 @@ type CreateUserParams struct {
 }
 
 // CreateUser: Create a new user in the database
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
-	_, err := q.db.ExecContext(ctx, createUser,
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, createUser,
 		arg.ID,
 		arg.Email,
 		arg.Password,
 		arg.CreatedAt,
 	)
-	return errtrace.Wrap(err)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Password,
+		&i.CreatedAt,
+		&i.VerifiedAt,
+	)
+	return i, errtrace.Wrap(err)
 }
 
 const deleteUser = `-- name: DeleteUser :exec

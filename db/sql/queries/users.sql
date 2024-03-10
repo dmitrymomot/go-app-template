@@ -1,6 +1,6 @@
--- name: CreateUser :exec
+-- name: CreateUser :one
 -- CreateUser: Create a new user in the database
-INSERT INTO users (id, email, password, created_at) VALUES (@id, @email, @password, @created_at);
+INSERT INTO users (id, email, password, created_at) VALUES (@id, @email, @password, @created_at) RETURNING *;
 
 -- name: GetUserByEmail :one
 -- GetUserByEmail: Get a user by email

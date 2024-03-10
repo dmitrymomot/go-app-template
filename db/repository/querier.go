@@ -18,7 +18,7 @@ type Querier interface {
 	// CreateAccountMember: creates a member for an account
 	CreateAccountMember(ctx context.Context, arg CreateAccountMemberParams) error
 	// CreateUser: Create a new user in the database
-	CreateUser(ctx context.Context, arg CreateUserParams) error
+	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	// CreateUserSocialProfile: Link a user to a social profile
 	CreateUserSocialProfile(ctx context.Context, arg CreateUserSocialProfileParams) error
 	// DeleteAccount: deletes an account
@@ -37,8 +37,8 @@ type Querier interface {
 	DeleteUserSocialProfilesByUserID(ctx context.Context, userID string) error
 	// GetAccount: retrieves an account by its id
 	GetAccount(ctx context.Context, id string) (Account, error)
-	// GetAccountByName: retrieves an account by its name
-	GetAccountByName(ctx context.Context, name string) (Account, error)
+	// GetAccountBySlug: retrieves an account by its slug
+	GetAccountBySlug(ctx context.Context, slug string) (Account, error)
 	// GetAccountMember: retrieves a member of an account by its id
 	GetAccountMemberByID(ctx context.Context, id string) (AccountMember, error)
 	// GetAccountMemberByUserID: retrieves a member of an account by its user_id

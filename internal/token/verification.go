@@ -27,9 +27,9 @@ type tokenSigner[Payload any] interface {
 
 // NewVerificationService creates a new instance of the VerificationService.
 // It takes a secretKey as a parameter and returns a pointer to the VerificationService.
-func NewVerificationService(secretKey string) *VerificationService {
+func NewVerificationService(secretKey []byte) *VerificationService {
 	return &VerificationService{
-		signer: signature.NewSigner256[dto.VerificationToken]([]byte(secretKey)),
+		signer: signature.NewSigner256[dto.VerificationToken](secretKey),
 	}
 }
 

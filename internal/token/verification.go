@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"braces.dev/errtrace"
 	"github.com/dmitrymomot/go-app-template/internal/dto"
 	"github.com/dmitrymomot/go-signature/v2"
 )
@@ -37,7 +38,7 @@ func NewVerificationService(secretKey string) *VerificationService {
 func (s *VerificationService) Generate(payload dto.VerificationToken, expiration time.Duration) (string, error) {
 	token, err := s.signer.SignTemporary(payload, expiration)
 	if err != nil {
-		return "", errors.Join(ErrFailedToGenerateToken, err)
+		return "", errtrace.Wrap(errors.Join(ErrFailedToGenerateToken, err))
 	}
 	return token, nil
 }
@@ -47,7 +48,7 @@ func (s *VerificationService) Generate(payload dto.VerificationToken, expiration
 func (s *VerificationService) Verify(token string) (dto.VerificationToken, error) {
 	payload, err := s.signer.Parse(token)
 	if err != nil {
-		return payload, errors.Join(ErrFailedToVerifyToken, err)
+		return payload, errtrace.Wrap(errors.Join(ErrFailedToVerifyToken, err))
 	}
 	return payload, nil
 }

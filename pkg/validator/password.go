@@ -1,9 +1,10 @@
 package validator
 
 import (
-	"braces.dev/errtrace"
 	"errors"
 	"regexp"
+
+	"braces.dev/errtrace"
 )
 
 // Predefined validation errors.
@@ -27,11 +28,11 @@ func ValidatePassword(password string) error {
 	// Check if password is too short or too long.
 	// This is not necessary because the password length is already validated
 	// by the minLen and maxLen tags in the validator package.
-	// if len(password) < 8 {
-	// 	return ErrPasswordTooShort
-	// } else if len(password) > 64 {
-	// 	return ErrPasswordTooLong
-	// }
+	if len(password) < 8 {
+		return ErrPasswordTooShort
+	} else if len(password) > 64 {
+		return ErrPasswordTooLong
+	}
 
 	// Check if password contains at least one digit.
 	if !regexpPasswordDigit.MatchString(password) {

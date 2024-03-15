@@ -14,15 +14,15 @@ const getAccountUsers = `-- name: GetAccountUsers :many
 SELECT users.id, users.email, users.password, users.created_at, users.verified_at, account_members.id, account_members.account_id, account_members.user_id, account_members.name, account_members.role, account_members.avatar_url, account_members.created_at
 FROM account_members
 JOIN users ON users.id = account_members.user_id
-WHERE account_members.account_id = ?1
+WHERE account_members.account_id = ?
 ORDER BY account_members.created_at DESC
-LIMIT ?3 OFFSET ?2
+LIMIT ? OFFSET ?
 `
 
 type GetAccountUsersParams struct {
 	AccountID string
-	Offset    int64
 	Limit     int64
+	Offset    int64
 }
 
 type GetAccountUsersRow struct {
@@ -32,7 +32,7 @@ type GetAccountUsersRow struct {
 
 // GetAccountUsers: retrieves users list of an account with pagination
 func (q *Queries) GetAccountUsers(ctx context.Context, arg GetAccountUsersParams) ([]GetAccountUsersRow, error) {
-	rows, err := q.db.QueryContext(ctx, getAccountUsers, arg.AccountID, arg.Offset, arg.Limit)
+	rows, err := q.db.QueryContext(ctx, getAccountUsers, arg.AccountID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, errtrace.Wrap(err)
 	}
@@ -71,15 +71,15 @@ const getUserAccounts = `-- name: GetUserAccounts :many
 SELECT accounts.id, accounts.name, accounts.slug, accounts.logo_url, accounts.created_at, account_members.id, account_members.account_id, account_members.user_id, account_members.name, account_members.role, account_members.avatar_url, account_members.created_at
 FROM account_members
 JOIN accounts ON accounts.id = account_members.account_id
-WHERE account_members.user_id = ?1
+WHERE account_members.user_id = ?
 ORDER BY account_members.created_at DESC
-LIMIT ?3 OFFSET ?2
+LIMIT ? OFFSET ?
 `
 
 type GetUserAccountsParams struct {
 	UserID string
-	Offset int64
 	Limit  int64
+	Offset int64
 }
 
 type GetUserAccountsRow struct {
@@ -89,7 +89,7 @@ type GetUserAccountsRow struct {
 
 // GetUserAccounts: retrieves accounts list of a user with pagination
 func (q *Queries) GetUserAccounts(ctx context.Context, arg GetUserAccountsParams) ([]GetUserAccountsRow, error) {
-	rows, err := q.db.QueryContext(ctx, getUserAccounts, arg.UserID, arg.Offset, arg.Limit)
+	rows, err := q.db.QueryContext(ctx, getUserAccounts, arg.UserID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, errtrace.Wrap(err)
 	}

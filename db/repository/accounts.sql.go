@@ -12,7 +12,7 @@ import (
 )
 
 const createAccount = `-- name: CreateAccount :exec
-INSERT INTO accounts (id, name, slug, logo_url) VALUES (?1, ?2, ?3, ?4)
+INSERT INTO accounts (id, name, slug, logo_url) VALUES (?, ?, ?, ?)
 `
 
 type CreateAccountParams struct {
@@ -34,7 +34,7 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) er
 }
 
 const deleteAccount = `-- name: DeleteAccount :exec
-DELETE FROM accounts WHERE id = ?1
+DELETE FROM accounts WHERE id = ?
 `
 
 // DeleteAccount: deletes an account
@@ -44,7 +44,7 @@ func (q *Queries) DeleteAccount(ctx context.Context, id string) error {
 }
 
 const getAccount = `-- name: GetAccount :one
-SELECT id, name, slug, logo_url, created_at FROM accounts WHERE id = ?1
+SELECT id, name, slug, logo_url, created_at FROM accounts WHERE id = ?
 `
 
 // GetAccount: retrieves an account by its id
@@ -62,7 +62,7 @@ func (q *Queries) GetAccount(ctx context.Context, id string) (Account, error) {
 }
 
 const getAccountBySlug = `-- name: GetAccountBySlug :one
-SELECT id, name, slug, logo_url, created_at FROM accounts WHERE slug = ?1
+SELECT id, name, slug, logo_url, created_at FROM accounts WHERE slug = ?
 `
 
 // GetAccountBySlug: retrieves an account by its slug
@@ -80,7 +80,7 @@ func (q *Queries) GetAccountBySlug(ctx context.Context, slug string) (Account, e
 }
 
 const updateAccount = `-- name: UpdateAccount :exec
-UPDATE accounts SET name = ?1, slug = ?2, logo_url = ?3 WHERE id = ?4
+UPDATE accounts SET name = ?, slug = ?, logo_url = ? WHERE id = ?
 `
 
 type UpdateAccountParams struct {

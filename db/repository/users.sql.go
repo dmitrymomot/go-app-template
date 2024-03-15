@@ -13,7 +13,7 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (id, email, password, created_at) VALUES (?1, ?2, ?3, ?4) RETURNING id, email, password, created_at, verified_at
+INSERT INTO users (id, email, password, created_at) VALUES (?, ?, ?, ?) RETURNING id, email, password, created_at, verified_at
 `
 
 type CreateUserParams struct {
@@ -43,7 +43,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 }
 
 const deleteUser = `-- name: DeleteUser :exec
-DELETE FROM users WHERE id = ?1
+DELETE FROM users WHERE id = ?
 `
 
 // DeleteUser: Delete a user from the database
@@ -53,7 +53,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id string) error {
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, email, password, created_at, verified_at FROM users WHERE email = ?1
+SELECT id, email, password, created_at, verified_at FROM users WHERE email = ?
 `
 
 // GetUserByEmail: Get a user by email
@@ -71,7 +71,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, email, password, created_at, verified_at FROM users WHERE id = ?1
+SELECT id, email, password, created_at, verified_at FROM users WHERE id = ?
 `
 
 // GetUserByID: Get a user by id
@@ -89,17 +89,17 @@ func (q *Queries) GetUserByID(ctx context.Context, id string) (User, error) {
 }
 
 const getUsers = `-- name: GetUsers :many
-SELECT id, email, password, created_at, verified_at FROM users ORDER BY created_at DESC LIMIT ?2 OFFSET ?1
+SELECT id, email, password, created_at, verified_at FROM users ORDER BY created_at DESC LIMIT ? OFFSET ?
 `
 
 type GetUsersParams struct {
-	Offset int64
 	Limit  int64
+	Offset int64
 }
 
 // GetUsers: Get user list with pagination
 func (q *Queries) GetUsers(ctx context.Context, arg GetUsersParams) ([]User, error) {
-	rows, err := q.db.QueryContext(ctx, getUsers, arg.Offset, arg.Limit)
+	rows, err := q.db.QueryContext(ctx, getUsers, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, errtrace.Wrap(err)
 	}
@@ -140,7 +140,7 @@ func (q *Queries) GetUsersCount(ctx context.Context) (int64, error) {
 }
 
 const updateUserEmail = `-- name: UpdateUserEmail :exec
-UPDATE users SET email = ?1, verified_at = NULL WHERE id = ?2
+UPDATE users SET email = ?, verified_at = NULL WHERE id = ?
 `
 
 type UpdateUserEmailParams struct {
@@ -155,7 +155,7 @@ func (q *Queries) UpdateUserEmail(ctx context.Context, arg UpdateUserEmailParams
 }
 
 const updateUserPassword = `-- name: UpdateUserPassword :exec
-UPDATE users SET password = ?1 WHERE id = ?2
+UPDATE users SET password = ? WHERE id = ?
 `
 
 type UpdateUserPasswordParams struct {
@@ -170,7 +170,7 @@ func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPassword
 }
 
 const verifyUser = `-- name: VerifyUser :exec
-UPDATE users SET verified_at = ?1 WHERE id = ?2
+UPDATE users SET verified_at = ? WHERE id = ?
 `
 
 type VerifyUserParams struct {

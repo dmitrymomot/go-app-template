@@ -11,8 +11,7 @@ import (
 )
 
 const createUserSocialProfile = `-- name: CreateUserSocialProfile :exec
-INSERT INTO user_external_profiles (user_id, provider_id, provider_type, external_account_id)
-VALUES (?1, ?2, ?3, ?4)
+INSERT INTO user_external_profiles (user_id, provider_id, provider_type, external_account_id) VALUES (?, ?, ?, ?)
 `
 
 type CreateUserSocialProfileParams struct {
@@ -35,9 +34,9 @@ func (q *Queries) CreateUserSocialProfile(ctx context.Context, arg CreateUserSoc
 
 const deleteUserSocialProfileBySocialID = `-- name: DeleteUserSocialProfileBySocialID :exec
 DELETE FROM user_external_profiles
-WHERE external_account_id = ?1
-AND provider_type = ?2
-AND provider_id = ?3
+WHERE external_account_id = ?
+AND provider_type = ?
+AND provider_id = ?
 `
 
 type DeleteUserSocialProfileBySocialIDParams struct {
@@ -53,7 +52,7 @@ func (q *Queries) DeleteUserSocialProfileBySocialID(ctx context.Context, arg Del
 }
 
 const deleteUserSocialProfilesByUserID = `-- name: DeleteUserSocialProfilesByUserID :exec
-DELETE FROM user_external_profiles WHERE user_id = ?1
+DELETE FROM user_external_profiles WHERE user_id = ?
 `
 
 // DeleteUserSocialProfilesByUserID: Delete a user's social profiles by user id
@@ -64,9 +63,9 @@ func (q *Queries) DeleteUserSocialProfilesByUserID(ctx context.Context, userID s
 
 const getUserSocialProfileBySocialID = `-- name: GetUserSocialProfileBySocialID :one
 SELECT user_id, provider_id, provider_type, external_account_id, created_at FROM user_external_profiles
-WHERE external_account_id = ?1
-AND provider_type = ?2
-AND provider_id = ?3
+WHERE external_account_id = ?
+AND provider_type = ?
+AND provider_id = ?
 `
 
 type GetUserSocialProfileBySocialIDParams struct {
@@ -89,8 +88,35 @@ func (q *Queries) GetUserSocialProfileBySocialID(ctx context.Context, arg GetUse
 	return i, errtrace.Wrap(err)
 }
 
+const getUserSocialProfileByUserID = `-- name: GetUserSocialProfileByUserID :one
+SELECT user_id, provider_id, provider_type, external_account_id, created_at FROM user_external_profiles
+WHERE user_id = ?
+AND provider_type = ?
+AND provider_id = ?
+`
+
+type GetUserSocialProfileByUserIDParams struct {
+	UserID       string
+	ProviderType string
+	ProviderID   string
+}
+
+// GetUserSocialProfileByUserID: Get a user's social profile by user id and social name
+func (q *Queries) GetUserSocialProfileByUserID(ctx context.Context, arg GetUserSocialProfileByUserIDParams) (UserExternalProfile, error) {
+	row := q.db.QueryRowContext(ctx, getUserSocialProfileByUserID, arg.UserID, arg.ProviderType, arg.ProviderID)
+	var i UserExternalProfile
+	err := row.Scan(
+		&i.UserID,
+		&i.ProviderID,
+		&i.ProviderType,
+		&i.ExternalAccountID,
+		&i.CreatedAt,
+	)
+	return i, errtrace.Wrap(err)
+}
+
 const getUserSocialProfilesByUserID = `-- name: GetUserSocialProfilesByUserID :many
-SELECT user_id, provider_id, provider_type, external_account_id, created_at FROM user_external_profiles WHERE user_id = ?1 ORDER BY created_at DESC
+SELECT user_id, provider_id, provider_type, external_account_id, created_at FROM user_external_profiles WHERE user_id = ? ORDER BY created_at DESC
 `
 
 // GetUserSocialProfilesByUserID: Get a user's social profiles by user id

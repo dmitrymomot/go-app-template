@@ -14,7 +14,7 @@ import (
 const countAccountMembers = `-- name: CountAccountMembers :one
 SELECT COUNT(user_id) as count
 FROM account_members
-WHERE account_id = ?1
+WHERE account_id = ?
 `
 
 // CountAccountMembers: retrieves members number of an account
@@ -28,7 +28,7 @@ func (q *Queries) CountAccountMembers(ctx context.Context, accountID string) (in
 const countUserAccounts = `-- name: CountUserAccounts :one
 SELECT COUNT(account_id) as count
 FROM account_members
-WHERE user_id = ?1
+WHERE user_id = ?
 `
 
 // CountUserAccounts: retrieves accounts number of a user
@@ -40,7 +40,7 @@ func (q *Queries) CountUserAccounts(ctx context.Context, userID string) (int64, 
 }
 
 const createAccountMember = `-- name: CreateAccountMember :exec
-INSERT INTO account_members (id, account_id, user_id, name, role, avatar_url) VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+INSERT INTO account_members (id, account_id, user_id, name, role, avatar_url) VALUES (?, ?, ?, ?, ?, ?)
 `
 
 type CreateAccountMemberParams struct {
@@ -66,7 +66,7 @@ func (q *Queries) CreateAccountMember(ctx context.Context, arg CreateAccountMemb
 }
 
 const deleteAccountMember = `-- name: DeleteAccountMember :exec
-DELETE FROM account_members WHERE id = ?1
+DELETE FROM account_members WHERE id = ?
 `
 
 // DeleteAccountMember: deletes a member of an account
@@ -76,7 +76,7 @@ func (q *Queries) DeleteAccountMember(ctx context.Context, id string) error {
 }
 
 const deleteAccountMembersByAccountID = `-- name: DeleteAccountMembersByAccountID :exec
-DELETE FROM account_members WHERE account_id = ?1
+DELETE FROM account_members WHERE account_id = ?
 `
 
 // DeleteAccountMembersByAccountID: deletes all members of an account
@@ -86,7 +86,7 @@ func (q *Queries) DeleteAccountMembersByAccountID(ctx context.Context, accountID
 }
 
 const deleteAccountMembersByUserID = `-- name: DeleteAccountMembersByUserID :exec
-DELETE FROM account_members WHERE user_id = ?1
+DELETE FROM account_members WHERE user_id = ?
 `
 
 // DeleteAccountMembersByUserID: deletes all members across all accounts for a user
@@ -96,7 +96,7 @@ func (q *Queries) DeleteAccountMembersByUserID(ctx context.Context, userID strin
 }
 
 const getAccountMemberByID = `-- name: GetAccountMemberByID :one
-SELECT id, account_id, user_id, name, role, avatar_url, created_at FROM account_members WHERE id = ?1
+SELECT id, account_id, user_id, name, role, avatar_url, created_at FROM account_members WHERE id = ?
 `
 
 // GetAccountMember: retrieves a member of an account by its id
@@ -116,7 +116,7 @@ func (q *Queries) GetAccountMemberByID(ctx context.Context, id string) (AccountM
 }
 
 const getAccountMemberByUserID = `-- name: GetAccountMemberByUserID :one
-SELECT id, account_id, user_id, name, role, avatar_url, created_at FROM account_members WHERE account_id = ?1 AND user_id = ?2
+SELECT id, account_id, user_id, name, role, avatar_url, created_at FROM account_members WHERE account_id = ? AND user_id = ?
 `
 
 type GetAccountMemberByUserIDParams struct {
@@ -142,20 +142,20 @@ func (q *Queries) GetAccountMemberByUserID(ctx context.Context, arg GetAccountMe
 
 const getAccountMembers = `-- name: GetAccountMembers :many
 SELECT id, account_id, user_id, name, role, avatar_url, created_at FROM account_members
-WHERE account_id = ?1
+WHERE account_id = ?
 ORDER BY created_at DESC
-LIMIT ?3 OFFSET ?2
+LIMIT ? OFFSET ?
 `
 
 type GetAccountMembersParams struct {
 	AccountID string
-	Offset    int64
 	Limit     int64
+	Offset    int64
 }
 
 // GetAccountMembers: retrieves members list of an account with pagination
 func (q *Queries) GetAccountMembers(ctx context.Context, arg GetAccountMembersParams) ([]AccountMember, error) {
-	rows, err := q.db.QueryContext(ctx, getAccountMembers, arg.AccountID, arg.Offset, arg.Limit)
+	rows, err := q.db.QueryContext(ctx, getAccountMembers, arg.AccountID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, errtrace.Wrap(err)
 	}
@@ -186,7 +186,7 @@ func (q *Queries) GetAccountMembers(ctx context.Context, arg GetAccountMembersPa
 }
 
 const updateAccountMember = `-- name: UpdateAccountMember :exec
-UPDATE account_members SET name = ?1, role = ?2, avatar_url = ?3 WHERE id = ?4
+UPDATE account_members SET name = ?, role = ?, avatar_url = ? WHERE id = ?
 `
 
 type UpdateAccountMemberParams struct {

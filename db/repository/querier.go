@@ -55,6 +55,8 @@ type Querier interface {
 	GetUserByID(ctx context.Context, id string) (User, error)
 	// GetUserSocialProfileBySocialID: Get a user's social profile by social id and social name
 	GetUserSocialProfileBySocialID(ctx context.Context, arg GetUserSocialProfileBySocialIDParams) (UserExternalProfile, error)
+	// GetUserSocialProfileByUserID: Get a user's social profile by user id and social name
+	GetUserSocialProfileByUserID(ctx context.Context, arg GetUserSocialProfileByUserIDParams) (UserExternalProfile, error)
 	// GetUserSocialProfilesByUserID: Get a user's social profiles by user id
 	GetUserSocialProfilesByUserID(ctx context.Context, userID string) ([]UserExternalProfile, error)
 	// GetUsers: Get user list with pagination

@@ -9,5 +9,17 @@ services:
     volumes:
       - redis_data:/data
 
+  # asynqmon:
+  #   platform: linux/amd64
+  #   image: hibiken/asynqmon:latest
+  #   container_name: app_template_asynqmon
+  #   environment:
+  #     - PORT=8888
+  #     - REDIS_ADDR=redis:6379
+  #   ports:
+  #     - 8888:8888
+  #   deps:
+  #     - redis
+
 volumes:
   redis_data:

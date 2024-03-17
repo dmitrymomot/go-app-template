@@ -39,8 +39,8 @@ type emailSender interface {
 
 // tokenService is an interface for token operations.
 type tokenService interface {
-	Generate(payload dto.VerificationToken, expiration time.Duration) (string, error)
-	Verify(token string) (dto.VerificationToken, error)
+	Generate(payload dto.Verification, expiration time.Duration) (string, error)
+	Verify(token string) (dto.Verification, error)
 }
 
 // NewEmailService creates a new instance of the auth EmailService struct.
@@ -75,7 +75,7 @@ func (s *EmailService) Signup(ctx context.Context, email, password string) error
 		return errtrace.Wrap(errors.Join(ErrFailedToSignup, err))
 	}
 
-	token, err := s.tokenSvc.Generate(dto.NewEmailVerificationToken(
+	token, err := s.tokenSvc.Generate(dto.NewEmailVerification(
 		user.ID.String(),
 		user.Email,
 	), time.Hour*24)
@@ -109,7 +109,7 @@ func (s *EmailService) ForgotPassword(ctx context.Context, email string) error {
 		return errtrace.Wrap(errors.Join(ErrUserNotFound, err))
 	}
 
-	token, err := s.tokenSvc.Generate(dto.NewPasswordResetToken(
+	token, err := s.tokenSvc.Generate(dto.NewPasswordResetTokenVerification(
 		user.ID.String(),
 		user.Email,
 	), time.Minute*15)
@@ -132,7 +132,7 @@ func (s *EmailService) ResetPassword(ctx context.Context, token, password string
 		return errtrace.Wrap(errors.Join(ErrFailedToResetPassword, err))
 	}
 
-	if payload.Type != dto.PasswordResetTokenType {
+	if payload.Type != dto.PasswordResetVerificationType {
 		return errtrace.Wrap(errors.Join(ErrFailedToResetPassword, ErrInvalidToken))
 	}
 
@@ -155,7 +155,7 @@ func (s *EmailService) VerifyEmail(ctx context.Context, token string) (dto.User,
 		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToVerifyEmail, err))
 	}
 
-	if payload.Type != dto.EmailVerificationTokenType {
+	if payload.Type != dto.EmailVerificationType {
 		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToVerifyEmail, ErrInvalidToken))
 	}
 

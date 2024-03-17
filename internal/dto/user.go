@@ -3,6 +3,7 @@ package dto
 import (
 	"time"
 
+	"braces.dev/errtrace"
 	"github.com/dmitrymomot/go-app-template/db/repository"
 	"github.com/google/uuid"
 )
@@ -20,7 +21,7 @@ type User struct {
 func CastFromRepositoryUser(u repository.User) (User, error) {
 	uid, err := uuid.Parse(u.ID)
 	if err != nil {
-		return User{}, err
+		return User{}, errtrace.Wrap(err)
 	}
 
 	return User{

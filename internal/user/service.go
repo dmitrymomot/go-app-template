@@ -45,17 +45,26 @@ func (s *Service) CreateUser(ctx context.Context, email, password string) (dto.U
 	}
 
 	// Prepare a new user data
-	uid := uuid.New()
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, err))
+	var (
+		uid          = uuid.New()
+		passwordHash []byte
+	)
+	if password != "" {
+		// Validate the new password
+		if err := validator.ValidatePassword(password); err != nil {
+			return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, err))
+		}
+		passwordHash, err = bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToCreateUser, err))
+		}
 	}
 
 	// Create a new user
 	user, err := s.repo.CreateUser(ctx, repository.CreateUserParams{
 		ID:        uid.String(),
 		Email:     email,
-		Password:  sql.NullString{String: string(passwordHash), Valid: true},
+		Password:  sql.NullString{String: string(passwordHash), Valid: len(passwordHash) > 0},
 		CreatedAt: time.Now(),
 	})
 	if err != nil {
@@ -75,7 +84,10 @@ func (s *Service) CreateUser(ctx context.Context, email, password string) (dto.U
 func (s *Service) GetUserByEmail(ctx context.Context, email string) (dto.User, error) {
 	user, err := s.repo.GetUserByEmail(ctx, email)
 	if err != nil {
-		return dto.User{}, errtrace.Wrap(errors.Join(ErrUserNotFound, err))
+		if errors.Is(err, sql.ErrNoRows) {
+			return dto.User{}, errtrace.Wrap(errors.Join(ErrUserNotFound, err))
+		}
+		return dto.User{}, errtrace.Wrap(errors.Join(ErrFailedToRetrieveUser, err))
 	}
 
 	result, err := dto.CastFromRepositoryUser(user)
@@ -131,7 +143,7 @@ func (s *Service) UpdateUserPassword(ctx context.Context, id uuid.UUID, currentP
 		return errtrace.Wrap(errors.Join(ErrFailedToUpdatePassword, err))
 	}
 
-	return s.ResetUserPassword(ctx, id, newPassword)
+	return errtrace.Wrap(s.ResetUserPassword(ctx, id, newPassword))
 }
 
 // ResetUserPassword resets a user password with the specified ID.
@@ -197,7 +209,7 @@ func (s *Service) CheckPasswordByID(ctx context.Context, id uuid.UUID, password 
 	if err != nil {
 		return dto.User{}, errtrace.Wrap(errors.Join(ErrInvalidCredentials, err))
 	}
-	return s.checkPassword(user, password)
+	return errtrace.Wrap2(s.checkPassword(user, password))
 }
 
 // CheckPasswordByEmail checks if the provided password matches the user's password.
@@ -207,7 +219,7 @@ func (s *Service) CheckPasswordByEmail(ctx context.Context, email, password stri
 	if err != nil {
 		return dto.User{}, errtrace.Wrap(errors.Join(ErrInvalidCredentials, err))
 	}
-	return s.checkPassword(user, password)
+	return errtrace.Wrap2(s.checkPassword(user, password))
 }
 
 // checkPassword checks if the provided password matches the user's password.

@@ -1,4 +1,4 @@
-package token
+package verification
 
 import "errors"
 

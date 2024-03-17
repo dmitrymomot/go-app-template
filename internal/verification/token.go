@@ -1,4 +1,4 @@
-package token
+package verification
 
 import (
 	"errors"
@@ -9,9 +9,9 @@ import (
 	"github.com/dmitrymomot/go-signature/v2"
 )
 
-// VerificationService provides functionality for verifying tokens.
-type VerificationService struct {
-	signer tokenSigner[dto.VerificationToken]
+// TokenVerificationService provides functionality for verifying tokens.
+type TokenVerificationService struct {
+	signer tokenSigner[dto.Verification]
 }
 
 // tokenSigner is an interface that defines the methods for signing and parsing data.
@@ -25,17 +25,17 @@ type tokenSigner[Payload any] interface {
 	Parse(token string) (Payload, error)
 }
 
-// NewVerificationService creates a new instance of the VerificationService.
+// NewTokenVerificationService creates a new instance of the VerificationService.
 // It takes a secretKey as a parameter and returns a pointer to the VerificationService.
-func NewVerificationService(secretKey []byte) *VerificationService {
-	return &VerificationService{
-		signer: signature.NewSigner256[dto.VerificationToken](secretKey),
+func NewTokenVerificationService(secretKey []byte) *TokenVerificationService {
+	return &TokenVerificationService{
+		signer: signature.NewSigner256[dto.Verification](secretKey),
 	}
 }
 
 // Generate generates a new token with the specified payload and expiration time.
 // It takes a payload and expiration time as parameters and returns a token and an error.
-func (s *VerificationService) Generate(payload dto.VerificationToken, expiration time.Duration) (string, error) {
+func (s *TokenVerificationService) Generate(payload dto.Verification, expiration time.Duration) (string, error) {
 	token, err := s.signer.SignTemporary(payload, expiration)
 	if err != nil {
 		return "", errtrace.Wrap(errors.Join(ErrFailedToGenerateToken, err))
@@ -45,7 +45,7 @@ func (s *VerificationService) Generate(payload dto.VerificationToken, expiration
 
 // Verify verifies the specified token.
 // It takes a token as a parameter and returns a payload and an error.
-func (s *VerificationService) Verify(token string) (dto.VerificationToken, error) {
+func (s *TokenVerificationService) Verify(token string) (dto.Verification, error) {
 	payload, err := s.signer.Parse(token)
 	if err != nil {
 		return payload, errtrace.Wrap(errors.Join(ErrFailedToVerifyToken, err))
